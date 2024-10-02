@@ -1,0 +1,20 @@
+{% load status_key_extras %}
+<!-- Listed Ranks -->
+{% for rank in ranks %}
+    {% if rank.getMembersWhoHaveThisRank.count != 0 %}
+    <em style="display: block">{{ rank.key }} - {{ rank.name }}</em>
+    <dl>
+        {% for member in rank.getMembersWhoHaveThisRank %}
+            <dd><div class='cardy-boi'>
+                <div class='input-group input-group-sm mb-3 {% returnbgkey member.status.key %}'>
+                    <!-- high value stuff -->
+                    <span class='input-group-text {% returnbgkey member.status.key %}' id='inputGroup-sizing-sm'>{{ member.name }}</span>
+                    <input type='text'  disabled class='notes-input-field form-control {% returnbgkey member.status.key %}' value='{{ member.status.name }}{% if member.details != '' %} - {{ member.details }}{% endif %}' aria-label='Sizing example input' aria-describedby='inputGroup-sizing-sm'>
+                    <button class='btn btn-sm {% returnbgkey member.status.key %}' type='button' data-bs-toggle='dropdown' aria-expanded='false'>{{ member.duty.key }}</button>
+                </div>
+                </div>
+            </dd>
+        {% endfor %}
+    </dl>
+    {% endif %}
+{% endfor %}

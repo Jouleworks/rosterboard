@@ -1,0 +1,531 @@
+<h5 style="margin: 18px 0; text-align: left;">{{ event.name }}<br><small class="text-muted" style="font-size: 14px;">Settings</small></h5>
+<div class="row">
+    <div class="col-md-12">
+        <a href="javascript:///" class="btn btn-default btn-block" id="manage_members" data-bs-toggle="modal" onclick="loadManage('member')" data-bs-target="#memberModal">Manage Members</a>
+    </div>
+    <div class="col-md-12">
+        <a href="javascript:///" class="btn btn-default btn-block" id="manage_ranks" data-bs-toggle="modal" onclick="loadManage('rank')" data-bs-target="#rankModal">Manage Ranks</a>
+    </div>
+    <div class="col-md-12">
+        <a href="javascript:///" class="btn btn-default btn-block" id="manage_statuses" data-bs-toggle="modal" onclick="loadManage('status')" data-bs-target="#statusModal">Manage Status Columns</a>
+    </div>
+    <div class="col-md-12">
+        <a href="javascript:///" class="btn btn-default btn-block" id="manage_duties" data-bs-toggle="modal" onclick="loadManage('duty')" data-bs-target="#dutyModal">Manage Duties</a>
+    </div>
+    <div class="col-md-12">
+        <a href="javascript:///" class="btn btn-default btn-block" id="manage_volumes" data-bs-toggle="modal" onclick="loadManage('volumeRole')" data-bs-target="#volumeRoleModal">Manage Volume Roles</a>
+    </div>
+    <div class="col-md-12">
+        <a href="javascript:///" class="btn btn-default btn-block" id="manage_badge" data-bs-toggle="modal" onclick="loadManage('badge')" data-bs-target="#badgeModal">Manage Badges</a>
+    </div>
+    <div class="col-md-12">
+        <a href="javascript:///" class="btn btn-default btn-block" id="manage_kiosk" data-bs-toggle="modal" onclick="loadManage('kiosk')" data-bs-target="#kioskModal">Manage Kiosks</a>
+    </div>
+    <div class="col-md-12">
+        <a href="javascript:///" class="btn btn-default btn-block" id="manage_event_info" data-bs-toggle="modal" onclick="loadManage('event')" data-bs-target="#eventModal">Manage Event Details</a>
+    </div>
+    <div class="col-md-12">
+        <a href="javascript:///" class="btn btn-default btn-block" id="manage_histories" data-bs-toggle="modal" onclick="loadManage('history')" data-bs-target="#historyModal">Manage History</a>
+    </div>
+        <hr>
+        <h6>Danger Zone&trade;</h6>
+    <div class="col-md-12">
+        <a href="javascript:///" class="btn btn-default btn-block reloader-button" onclick="issueReloadAll()">Reload All Boards for this Event</a>
+    </div>
+
+    <div class="col-md-12">
+        <a href="javascript:///" class="btn btn-default btn-block" id="manage_copy" data-bs-toggle="modal" onclick="loadManage('copy')" data-bs-target="#copyModal">Copy Items from Other Event</a>
+    </div>
+</div>
+<script>
+
+    function newToast(title, message) {
+        $("body").append('<div class="toast" id="toast-1" role="alert" aria-live="assertive" aria-atomic="true"><div class="toast-header"><strong class="me-auto">'+title+'</strong><button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button></div><div class="toast-body">'+message+'</div></div>');
+    }
+
+    function getFormData($form){
+        var unindexed_array = $form.serializeArray();
+        console.log(unindexed_array);
+        var indexed_array = {};
+
+        $.map(unindexed_array, function(n, i){
+            indexed_array[n['name']] = n['value'];
+        });
+
+        return indexed_array;
+    }
+
+    function submitForm(form_model_name, form_id){
+        let form_j = getFormData($("#"+form_id));
+        console.log(form_j, form_model_name);
+        $.post('api/post/add/'+form_model_name+'/', form_j, function(data){
+            console.log(data);
+            newToast('Success', 'New '+form_model_name+' created');
+            setLiveActionButton();
+            if(form_model_name === 'volumerole'){
+                loadManage('volumeRole')
+            }else{
+                loadManage(form_model_name);
+            }
+
+        })
+    }
+    // api/post/edit/<str:name>/<str:pk>/
+    function editForm(form_model_name, form_id){
+        let form_j = getFormData($("#"+form_id));
+        console.log(form_j, form_model_name);
+        let new_form_j = {}
+        for (const [key, value] of Object.entries(form_j)) {
+          if(value == false){
+              new_form_j[key] = ":"+value+":";
+          }else{
+              new_form_j[key] = value;
+          }
+        }
+        $.post('api/post/edit/'+form_model_name+'/'+$("#edit"+form_model_name+"Button").attr("data-pk")+'/', form_j, function(data){
+            console.log(data);
+            newToast('Success', form_model_name+' edited');
+            setLiveActionButton();
+            if(form_model_name === 'event'){
+                window.location.reload();
+            }else{
+                if(form_model_name === 'volumerole'){
+                    loadManage('volumeRole')
+                }else{
+                    loadManage(form_model_name);
+                }
+            }
+
+        })
+    }
+    function startEdit(form_model_name, form_id){
+        $.get('modals/edit/'+form_model_name+'/'+form_id+'/', function (data) {
+            $("#"+form_model_name+"ModalBody").html(data);
+            setLiveActionButton("edit"+form_model_name+"Button",form_id);
+        })
+    }
+
+    function startDelete(form_model_name, form_id){
+        if(confirm("Are you sure you want to delete this "+form_model_name+"?")){
+            $.get('api/del/'+form_model_name+'/'+form_id+'/', function(data){
+                console.log(data);
+                newToast('Success', form_model_name+' deleted');
+                setLiveActionButton();
+                loadManage(form_model_name);
+            })
+        }
+    }
+
+    function loadManage(module){
+        $("#"+module+"ModalBody").html("");
+        $.get('modals/'+module.toLowerCase()+'/list/', function(data) {
+            $("#"+module+"ModalBody").html(data);
+            if(module === 'event'){
+                setLiveActionButton("editeventButton", "{{ event.id }}");
+            }
+            //
+        })
+    }
+
+    function loadManageMembers() {
+
+    }
+
+    function loadManageVolumeRoles() {
+        $("#volumeRoleModalBody").html("");
+        $.get('modals/volumerole/list/', function(data) {
+            $("#volumeRoleModalBody").html(data);
+            //setLiveActionButton("addMemberButton");
+        })
+    }
+
+    function loadManageRanks() {
+        $("#rankModalBody").html("");
+        $.get('modals/rank/list/', function(data) {
+            $("#rankModalBody").html(data);
+            //setLiveActionButton("addMemberButton");
+        })
+    }
+
+    function loadManageStatuses() {
+        $("#statusModalBody").html("");
+        $.get('modals/status/list/', function(data) {
+            $("#statusModalBody").html(data);
+            //setLiveActionButton("addMemberButton");
+        })
+    }
+
+    function loadManageDuties() {
+        $("#dutyModalBody").html("");
+        $.get('modals/duty/list/', function(data) {
+            $("#dutyModalBody").html(data);
+            //setLiveActionButton("addMemberButton");
+        })
+    }
+
+    function setLiveActionButton(id="", addtl_data=''){
+        $(".action-buttons").addClass("hide-action-button");
+        if(id !== ""){
+            $("#"+id).removeClass("hide-action-button");
+        }
+        if(addtl_data!== ""){
+            $("#"+id).attr("data-pk", addtl_data);
+        }
+    }
+
+    $(document).ready(function() {
+        console.log("SETTINGS PANE: READY");
+
+        $(document).on('click', '#loadListMembers', function() {
+            $("#memberModalBody").html("");
+            $.get('modals/member/list/', function(data) {
+                $("#memberModalBody").html(data);
+                setLiveActionButton("");
+            })
+        })
+
+        $(document).on('click', '#loadAddMembers', function() {
+            $("#memberModalBody").html("");
+            $.get('modals/member/add/', function(data) {
+                $("#memberModalBody").html(data);
+                setLiveActionButton("addMemberButton");
+            })
+        })
+
+        $(document).on('click', '#loadListHistory', function() {
+            $("#historyModalBody").html("");
+            $.get('modals/history/list/', function(data) {
+                $("#historyModalBody").html(data);
+                setLiveActionButton("");
+            })
+        })
+
+        $(document).on('click', '#loadAddHistory', function() {
+            $("#historyModalBody").html("");
+            $.get('modals/history/add/', function(data) {
+                $("#historyModalBody").html(data);
+                setLiveActionButton("addHistoryButton");
+            })
+        })
+
+        $(document).on('click', '#loadListRanks', function() {
+            $("#rankModalBody").html("");
+            $.get('modals/rank/list/', function(data) {
+                $("#rankModalBody").html(data);
+                setLiveActionButton("");
+            })
+        })
+
+        $(document).on('click', '#loadAddRanks', function() {
+            $("#rankModalBody").html("");
+            $.get('modals/rank/add/', function(data) {
+                $("#rankModalBody").html(data);
+                setLiveActionButton("addRankButton");
+            })
+        });
+
+        $(document).on('click', '#loadListStatuses', function() {
+            $("#statusModalBody").html("");
+            $.get('modals/status/list/', function(data) {
+                $("#statusModalBody").html(data);
+                setLiveActionButton("");
+            })
+        })
+
+        $(document).on('click', '#loadAddStatuses', function() {
+            $("#statusModalBody").html("");
+            $.get('modals/status/add/', function(data) {
+                $("#statusModalBody").html(data);
+                setLiveActionButton("addStatusButton");
+            })
+        })
+
+        $(document).on('click', '#loadListVolumeRoles', function() {
+            $("#volumeRoleModalBody").html("");
+            $.get('modals/volumerole/list/', function(data) {
+                $("#volumeRoleModalBody").html(data);
+                setLiveActionButton("");
+            })
+        })
+
+        $(document).on('click', '#loadAddVolumeRoles', function() {
+            $("#volumeRoleModalBody").html("");
+            $.get('modals/volumerole/add/', function(data) {
+                $("#volumeRoleModalBody").html(data);
+                setLiveActionButton("addVolumeRoleButton");
+            })
+        })
+
+        $(document).on('click', '#loadListDuties', function() {
+            $("#dutyModalBody").html("");
+            $.get('modals/duty/list/', function(data) {
+                $("#dutyModalBody").html(data);
+                setLiveActionButton("");
+            })
+        })
+
+        $(document).on('click', '#loadAddDuties', function() {
+            $("#dutyModalBody").html("");
+            $.get('modals/duty/add/', function(data) {
+                $("#dutyModalBody").html(data);
+                setLiveActionButton("addDutyButton");
+            })
+        })
+
+        $(document).on('click', '#loadListKiosks', function() {
+            $("#kioskModalBody").html("");
+            $.get('modals/kiosk/list/', function(data) {
+                $("#kioskModalBody").html(data);
+                setLiveActionButton("");
+            })
+        })
+
+        $(document).on('click', '#loadListBadges', function() {
+            $("#badgeModalBody").html("");
+            $.get('modals/badge/list/', function(data) {
+                $("#badgeModalBody").html(data);
+                setLiveActionButton("");
+            })
+        })
+
+        $(document).on('click', '#loadAddKiosks', function() {
+            $("#kioskModalBody").html("");
+            $.get('modals/kiosk/add/', function(data) {
+                $("#kioskModalBody").html(data);
+                setLiveActionButton("addKioskButton");
+            })
+        })
+
+        $(document).on('click', '#loadAddBadges', function() {
+            $("#badgeModalBody").html("");
+            $.get('modals/badge/add/', function(data) {
+                $("#badgeModalBody").html(data);
+                setLiveActionButton("addBadgeButton");
+            })
+        })
+
+        setLiveActionButton();
+    })
+</script>
+
+
+<div class="modal fade" id="memberModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Manage Members</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+            <div class="col-md-4"><a href="javascript:///" id="loadListMembers" class="btn btn-default btn-block manage-btn">List Members</a></div>
+            <div class="col-md-4"><a href="javascript:///" id="loadAddMembers" class="btn btn-default btn-block manage-btn">Add Members</a></div>
+        </div>
+      </div>
+      <div class="modal-body" id="memberModalBody">
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary action-buttons hide-action-button" onclick="submitForm('member', 'memberModalBody form')" id="addMemberButton">Add Member</button>
+          <button type="button" class="btn btn-warning action-buttons hide-action-button" id="editmemberButton" onclick="editForm('member', 'memberModalBody form')">Edit Member</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="historyModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Manage History</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+            <div class="col-md-4"><a href="javascript:///" id="loadListHistory" class="btn btn-default btn-block manage-btn">List History</a></div>
+            <div class="col-md-4"><a href="javascript:///" id="loadAddHistory" class="btn btn-default btn-block manage-btn">Add History</a></div>
+        </div>
+      </div>
+      <div class="modal-body" id="historyModalBody">
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary action-buttons hide-action-button" onclick="submitForm('history', 'historyModalBody form')" id="addHistoryButton">Add History</button>
+          <button type="button" class="btn btn-warning action-buttons hide-action-button" id="edithistoryButton" onclick="editForm('history', 'historyModalBody form')">Edit History</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="rankModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Manage Ranks</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+            <div class="col-md-4"><a href="javascript:///" id="loadListRanks" class="btn btn-default btn-block manage-btn">List Ranks</a></div>
+            <div class="col-md-4"><a href="javascript:///" id="loadAddRanks" class="btn btn-default btn-block manage-btn">Add Ranks</a></div>
+        </div>
+      </div>
+      <div class="modal-body" id="rankModalBody">
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary action-buttons hide-action-button" id="addRankButton" onclick="submitForm('rank', 'rankModalBody form')">Add Rank</button>
+          <button type="button" class="btn btn-warning action-buttons hide-action-button" id="editrankButton" onclick="editForm('rank', 'rankModalBody form')">Edit Duty</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="statusModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Manage Statuses</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+            <div class="col-md-4"><a href="javascript:///" id="loadListStatuses" class="btn btn-default btn-block manage-btn">List Statuses</a></div>
+            <div class="col-md-4"><a href="javascript:///" id="loadAddStatuses" class="btn btn-default btn-block manage-btn">Add Statuses</a></div>
+        </div>
+      </div>
+      <div class="modal-body" id="statusModalBody">
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary action-buttons hide-action-button" id="addStatusButton" onclick="submitForm('status', 'statusModalBody form')">Add Status</button>
+          <button type="button" class="btn btn-warning action-buttons hide-action-button" id="editstatusButton" onclick="editForm('status', 'statusModalBody form')">Edit Status</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade" id="dutyModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Manage Duties</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+            <div class="col-md-4"><a href="javascript:///" id="loadListDuties" class="btn btn-default btn-block manage-btn">List Duties</a></div>
+            <div class="col-md-4"><a href="javascript:///" id="loadAddDuties" class="btn btn-default btn-block manage-btn">Add Duties</a></div>
+        </div>
+      </div>
+      <div class="modal-body" id="dutyModalBody">
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary action-buttons hide-action-button" id="addDutyButton" onclick="submitForm('duty', 'dutyModalBody form')">Add Duty</button>
+        <button type="button" class="btn btn-warning action-buttons hide-action-button" id="editdutyButton" onclick="editForm('duty', 'dutyModalBody form')">Edit Duty</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade" id="volumeRoleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Manage Volume Roles</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+            <div class="col-md-4"><a href="javascript:///" id="loadListVolumeRoles" class="btn btn-default btn-block manage-btn">List Volume Roles</a></div>
+            <div class="col-md-4"><a href="javascript:///" id="loadAddVolumeRoles" class="btn btn-default btn-block manage-btn">Add Volume Roles</a></div>
+        </div>
+      </div>
+      <div class="modal-body" id="volumeRoleModalBody">
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary action-buttons hide-action-button" id="addVolumeRoleButton" onclick="submitForm('volumerole', 'volumeRoleModalBody form')">Add Volume Role</button>
+        <button type="button" class="btn btn-warning action-buttons hide-action-button" id="editvolumeroleButton" onclick="editForm('volumerole', 'volumeRoleModalBody form')">Edit Volume Role</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Edit Event Details</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="eventModalBody">
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-warning action-buttons hide-action-button" id="editeventButton" onclick="editForm('event', 'eventModalBody form')">Edit Event</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="kioskModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Manage Kiosks</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+            <div class="col-md-4"><a href="javascript:///" id="loadListKiosks" class="btn btn-default btn-block manage-btn">List Kiosks</a></div>
+            <div class="col-md-4"><a href="javascript:///" id="loadAddKiosks" class="btn btn-default btn-block manage-btn">Add Kiosk</a></div>
+        </div>
+      </div>
+      <div class="modal-body" id="kioskModalBody">
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary action-buttons hide-action-button" id="addKioskButton" onclick="submitForm('kiosk', 'kioskModalBody form')">Add Kiosk</button>
+        <button type="button" class="btn btn-warning action-buttons hide-action-button" id="editkioskButton" onclick="editForm('kiosk', 'kioskModalBody form')">Edit Kiosk</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="badgeModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Manage Badge</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+            <div class="col-md-4"><a href="javascript:///" id="loadListBadges" class="btn btn-default btn-block manage-btn">List Badges</a></div>
+            <div class="col-md-4"><a href="javascript:///" id="loadAddBadges" class="btn btn-default btn-block manage-btn">Add Badge</a></div>
+        </div>
+      </div>
+      <div class="modal-body" id="badgeModalBody">
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary action-buttons hide-action-button" id="addBadgeButton" onclick="submitForm('badge', 'badgeModalBody form')">Add Badge</button>
+        <button type="button" class="btn btn-warning action-buttons hide-action-button" id="editbadgeButton" onclick="editForm('badge', 'badgeModalBody form')">Edit Badge</button>
+      </div>
+    </div>
+  </div>
+</div>

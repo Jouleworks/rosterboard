@@ -1,0 +1,18 @@
+<table class="table table-dark table-sm">
+    <thead>
+        <tr>
+            <th>Key</th>
+            <th>Name</th>
+            <th>&nbsp;</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for badge in badges %}
+            <tr>
+                <td>{{ badge.member }}</td>
+                <td>{{ badge.tag }}</td>
+                <td><a href="javascript:///" class="btn btn-default btn-sm edit-action" onclick="startEdit('badge', '{{ badge.pk }}')" data-modal="badge" data-pk="{{ badge.pk }}">Edit</a> <a href="javascript:///" class="btn btn-default btn-sm delete-action" onclick="startDelete('badge', '{{ badge.pk }}')" data-modal="badge" data-pk="{{ badge.pk }}">Delete</a></td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>

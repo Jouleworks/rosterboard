@@ -1,0 +1,402 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.15.2/css/selectize.default.min.css"
+/>
+<script
+  src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.15.2/js/selectize.min.js"
+></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.3/dragula.min.js'></script>
+    <link href="{% static 'fontawesomefree/css/fontawesome.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'fontawesomefree/css/brands.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'fontawesomefree/css/solid.css' %}" rel="stylesheet" type="text/css">
+    <style>
+        /**
+ * Selectize (v0.15.2)
+ * https://selectize.dev
+ *
+ * Copyright (c) 2013-2015 Brian Reavis & contributors
+ * Copyright (c) 2020-2023 Selectize Team & contributors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this
+ * file except in compliance with the License. You may obtain a copy of the License at:
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
+ * ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ *
+ * @author Brian Reavis <brian@thirdroute.com>
+ * @author Ris Adams <selectize@risadams.com>
+ */
+.selectize-control.plugin-drag_drop.multi>.selectize-input.dragging{overflow:visible}.selectize-control.plugin-drag_drop.multi>.selectize-input>div.ui-sortable-placeholder{visibility:visible !important;background:#f2f2f2 !important;background:rgba(0,0,0,0.06) !important;border:0 none !important;box-shadow:inset 0 0 12px 4px #fff}.selectize-control.plugin-drag_drop .ui-sortable-placeholder::after{content:"!";visibility:hidden}.selectize-control.plugin-drag_drop .ui-sortable-helper{box-shadow:0 2px 5px rgba(0,0,0,0.2)}.selectize-dropdown.plugin-dropdown_header .selectize-dropdown-header{position:relative;padding:6px .75rem;border-bottom:1px solid #d0d0d0;background:#f8f8f8;border-radius:.375rem .375rem 0 0}.selectize-dropdown.plugin-dropdown_header .selectize-dropdown-header-close{position:absolute;right:.75rem;top:50%;color:#343a40;opacity:.4;margin-top:-12px;line-height:20px;font-size:20px !important;text-decoration:none}.selectize-dropdown.plugin-dropdown_header .selectize-dropdown-header-close:hover{color:black}.selectize-dropdown.plugin-optgroup_columns .selectize-dropdown-content{display:flex}.selectize-dropdown.plugin-optgroup_columns .optgroup{border-right:1px solid #f2f2f2;border-top:0 none;flex-grow:1;flex-basis:0;min-width:0}.selectize-dropdown.plugin-optgroup_columns .optgroup:last-child{border-right:0 none}.selectize-dropdown.plugin-optgroup_columns .optgroup:before{display:none}.selectize-dropdown.plugin-optgroup_columns .optgroup-header{border-top:0 none}.selectize-control.plugin-remove_button .item{display:inline-flex;align-items:center;padding-right:0 !important}.selectize-control.plugin-remove_button .item .remove{color:inherit;text-decoration:none;vertical-align:middle;display:inline-block;padding:1px 5px;border-left:1px solid #dee2e6;border-radius:0 2px 2px 0;box-sizing:border-box;margin-left:5px}.selectize-control.plugin-remove_button .item .remove:hover{background:rgba(0,0,0,0.05)}.selectize-control.plugin-remove_button .item.active .remove{border-left-color:rgba(0,0,0,0)}.selectize-control.plugin-remove_button .disabled .item .remove:hover{background:0}.selectize-control.plugin-remove_button .disabled .item .remove{border-left-color:white}.selectize-control.plugin-clear_button .clear{text-decoration:none;display:flex;position:absolute;height:100%;width:25px;top:0;right:calc(0.75rem - 5px);color:#000;opacity:.4;font-weight:bold;border:0;cursor:pointer;z-index:1;font-size:21px;justify-content:center;align-items:center}.selectize-control.plugin-clear_button .clear:hover{opacity:1}.selectize-control.plugin-clear_button.single .clear{right:calc(0.75rem - 5px + 1.5rem)}.selectize-dropdown.plugin-auto_position.selectize-position-top{border-top:1px solid #d0d0d0;border-bottom:0 none;border-radius:3px 3px 0 0;box-shadow:0 -6px 12px rgba(0,0,0,0.18)}.selectize-control.plugin-auto_position .selectize-input.selectize-position-top.dropdown-active{border-radius:0 0 3px 3px;border-top:0 none}.selectize-control.plugin-auto_position .selectize-input.selectize-position-top.dropdown-active::before{top:0;bottom:unset}.selectize-control{position:relative}.selectize-dropdown,.selectize-input,.selectize-input input{color:#343a40;font-family:inherit;font-size:inherit;line-height:1.5;font-smoothing:inherit}.selectize-input,.selectize-control.single .selectize-input.input-active{background:#fff;cursor:text;display:inline-block}.selectize-input{border:1px solid #ced4da;padding:.375rem .75rem;display:inline-block;width:100%;position:relative;z-index:1;box-sizing:border-box;box-shadow:none;border-radius:.375rem}.selectize-control.multi .selectize-input.has-items{padding:calc(0.375rem - 1px - 0px) 0.75rem calc(0.375rem - 1px - 3px - 0px)}.selectize-input.full{background-color:#fff}.selectize-input.disabled,.selectize-input.disabled *{cursor:default !important}.selectize-input.focus{box-shadow:inset 0 1px 2px rgba(0,0,0,0.15)}.selectize-input.dropdown-active{border-radius:.375rem .375rem 0 0}.selectize-input>*{vertical-align:baseline;display:inline-block;zoom:1}.selectize-control.multi .selectize-input>div{cursor:pointer;margin:0 3px 3px 0;padding:1px 5px;background:#efefef;color:#343a40;border:0 solid #dee2e6}.selectize-control.multi .selectize-input>div.active{background:#0d6efd;color:#fff;border:0 solid rgba(0,0,0,0)}.selectize-control.multi .selectize-input.disabled>div,.selectize-control.multi .selectize-input.disabled>div.active{color:#878787;background:white;border:0 solid white}.selectize-input>input{display:inline-block !important;padding:0 !important;min-height:0 !important;max-height:none !important;max-width:100% !important;margin:0 !important;text-indent:0 !important;border:0 none !important;background:none !important;line-height:inherit !important;user-select:auto !important;box-shadow:none !important}.selectize-input>input::-ms-clear{display:none}.selectize-input>input:focus{outline:none !important}.selectize-input>input[placeholder]{box-sizing:initial}.selectize-input.has-items>input{margin:0 0 !important}.selectize-input::after{content:" ";display:block;clear:left}.selectize-input.dropdown-active::before{content:" ";display:block;position:absolute;background:#d8dde1;height:1px;bottom:0;left:0;right:0}.selectize-dropdown{position:absolute;top:100%;left:0;width:100%;z-index:10;border:1px solid #d0d0d0;background:#fff;margin:-1px 0 0 0;border-top:0 none;box-sizing:border-box;box-shadow:0 1px 3px rgba(0,0,0,0.1);border-radius:0 0 .375rem .375rem}.selectize-dropdown [data-selectable]{cursor:pointer;overflow:hidden}.selectize-dropdown [data-selectable] .highlight{background:rgba(255,237,40,0.4);border-radius:1px}.selectize-dropdown .option,.selectize-dropdown .optgroup-header,.selectize-dropdown .no-results,.selectize-dropdown .create{padding:3px .75rem}.selectize-dropdown .option,.selectize-dropdown [data-disabled],.selectize-dropdown [data-disabled] [data-selectable].option{cursor:inherit;opacity:.5}.selectize-dropdown [data-selectable].option{opacity:1;cursor:pointer}.selectize-dropdown .optgroup:first-child .optgroup-header{border-top:0 none}.selectize-dropdown .optgroup-header{color:#6c757d;background:#fff;cursor:default}.selectize-dropdown .active{background-color:#0d6efd;color:#fff}.selectize-dropdown .active.create{color:#1e2125}.selectize-dropdown .selected{background-color:#0d6efd;color:#fff}.selectize-dropdown .create{color:rgba(52,58,64,0.5)}.selectize-dropdown .active:not(.selected){background:#e9ecef;color:#1e2125}.selectize-dropdown-content{overflow-y:auto;overflow-x:hidden;max-height:200px;overflow-scrolling:touch}.selectize-dropdown-emptyoptionlabel{text-align:center}.selectize-dropdown .spinner{display:inline-block;width:30px;height:30px;margin:3px .75rem}.selectize-dropdown .spinner:after{content:" ";display:block;width:24px;height:24px;margin:3px;border-radius:50%;border:5px solid #d0d0d0;border-color:#d0d0d0 transparent #d0d0d0 transparent;animation:lds-dual-ring 1.2s linear infinite}@keyframes lds-dual-ring{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}.selectize-control.single .selectize-input,.selectize-control.single .selectize-input input{cursor:pointer}.selectize-control.single .selectize-input.input-active,.selectize-control.single .selectize-input.input-active input:not(:read-only){cursor:text}.selectize-control.single .selectize-input:not(.no-arrow):after{content:" ";display:block;position:absolute;top:50%;right:calc(0.75rem + 5px);margin-top:-3px;width:0;height:0;border-style:solid;border-width:5px 5px 0 5px;border-color:#343a40 transparent transparent transparent}.selectize-control.single .selectize-input:not(.no-arrow).dropdown-active:after{margin-top:-4px;border-width:0 5px 5px 5px;border-color:transparent transparent #343a40 transparent}.selectize-control.rtl{text-align:right}.selectize-control.rtl.single .selectize-input:after{left:calc(0.75rem + 5px);right:auto}.selectize-control.rtl .selectize-input>input{margin:0 4px 0 -2px !important}.selectize-control .selectize-input.disabled{opacity:.5;background-color:#fff}.selectize-dropdown,.selectize-dropdown.form-control{height:auto;padding:0;margin:2px 0 0 0;z-index:1000;background:#fff;border:1px solid var(--bs-border-color-translucent);border-radius:.375rem;box-shadow:0 6px 12px rgba(0,0,0,0.175)}.selectize-dropdown .optgroup-header{font-size:.875rem;line-height:1.5}.selectize-dropdown .optgroup:first-child:before{display:none}.selectize-dropdown .optgroup:before{content:" ";display:block;height:0;margin:.5rem 0;overflow:hidden;border-top:1px solid var(--bs-border-color-translucent);margin-left:-0.75rem;margin-right:-0.75rem}.selectize-dropdown .create{padding-left:.75rem}.selectize-dropdown-content{padding:5px 0}.selectize-dropdown-emptyoptionlabel{text-align:center}.selectize-input{min-height:calc(1.5em + 0.75rem + 2px);transition:border-color .15s ease-in-out,box-shadow .15s ease-in-out}@media(prefers-reduced-motion:reduce){.selectize-input{transition:none}}.selectize-input.dropdown-active{border-radius:.375rem}.selectize-input.dropdown-active::before{display:none}.selectize-input.focus{border-color:#86b7fe;outline:0;box-shadow:0 0 0 .25rem rgba(13,110,253,0.25)}.is-invalid .selectize-input{border-color:#dc3545;box-shadow:inset 0 1px 1px rgba(0,0,0,0.075)}.is-invalid .selectize-input:focus{border-color:#bd2130;box-shadow:inset 0 1px 1px rgba(0,0,0,0.075),0 0 6px #eb8c95}.selectize-control.form-control-sm .selectize-input{min-height:calc(1.5em + 0.5rem + 2px) !important;height:calc(1.5em + 0.5rem + 2px);padding:.25rem .5rem !important;font-size:.875rem;line-height:1.25}.selectize-control.multi .selectize-input{height:auto;padding-left:calc(0.75rem - 5px);padding-right:calc(0.75rem - 5px)}.selectize-control.multi .selectize-input>div{border-radius:calc(0.375rem - 1px)}.form-select.selectize-control,.form-control.selectize-control{padding:0;height:auto;border:0;background:0;box-shadow:none;border-radius:0}.input-group>.input-group-append>.btn,.input-group>.form-control:not(:first-child){border-top-left-radius:0;border-bottom-left-radius:0}.input-group>.input-group-prepend>.btn{border-top-right-radius:0;border-bottom-right-radius:0}.input-group .selectize-control:not(:last-child) .selectize-input{overflow:unset;border-top-right-radius:0;border-bottom-right-radius:0}.input-group .selectize-control:not(:first-child) .selectize-input{overflow:unset;border-top-left-radius:0;border-bottom-left-radius:0}.selectize-dropdown.plugin-auto_position.selectize-position-top{border-top:1px solid #ced4da !important;border-bottom:1px solid #ced4da !important;border-radius:.375rem !important}.selectize-control.plugin-auto_position .selectize-input.selectize-position-top.dropdown-active{border-radius:.375rem !important;border-top:1px solid #ced4da !important}.selectize-dropdown.plugin-auto_position.selectize-position-top{border-top:1px solid #d0d0d0;border-bottom:0 none;border-radius:3px 3px 0 0;box-shadow:0 -6px 12px rgba(0,0,0,0.18)}.selectize-control.plugin-auto_position .selectize-input.selectize-position-top.dropdown-active{border-radius:0 0 3px 3px;border-top:0 none}.selectize-control.plugin-auto_position .selectize-input.selectize-position-top.dropdown-active::before{top:0;bottom:unset}.selectize-control.plugin-clear_button .clear{text-decoration:none;display:flex;position:absolute;height:100%;width:25px;top:0;right:calc(0.75rem - 5px);color:#000;opacity:.4;font-weight:bold;border:0;cursor:pointer;z-index:1;font-size:21px;justify-content:center;align-items:center}.selectize-control.plugin-clear_button .clear:hover{opacity:1}.selectize-control.plugin-clear_button.single .clear{right:calc(0.75rem - 5px + 1.5rem)}.selectize-control.plugin-drag_drop.multi>.selectize-input.dragging{overflow:visible}.selectize-control.plugin-drag_drop.multi>.selectize-input>div.ui-sortable-placeholder{visibility:visible !important;background:#f2f2f2 !important;background:rgba(0,0,0,0.06) !important;border:0 none !important;box-shadow:inset 0 0 12px 4px #fff}.selectize-control.plugin-drag_drop .ui-sortable-placeholder::after{content:"!";visibility:hidden}.selectize-control.plugin-drag_drop .ui-sortable-helper{box-shadow:0 2px 5px rgba(0,0,0,0.2)}.selectize-dropdown.plugin-dropdown_header .selectize-dropdown-header{position:relative;padding:6px .75rem;border-bottom:1px solid #d0d0d0;background:#f8f8f8;border-radius:.375rem .375rem 0 0}.selectize-dropdown.plugin-dropdown_header .selectize-dropdown-header-close{position:absolute;right:.75rem;top:50%;color:#343a40;opacity:.4;margin-top:-12px;line-height:20px;font-size:20px !important;text-decoration:none}.selectize-dropdown.plugin-dropdown_header .selectize-dropdown-header-close:hover{color:black}.selectize-dropdown.plugin-optgroup_columns .selectize-dropdown-content{display:flex}.selectize-dropdown.plugin-optgroup_columns .optgroup{border-right:1px solid #f2f2f2;border-top:0 none;flex-grow:1;flex-basis:0;min-width:0}.selectize-dropdown.plugin-optgroup_columns .optgroup:last-child{border-right:0 none}.selectize-dropdown.plugin-optgroup_columns .optgroup:before{display:none}.selectize-dropdown.plugin-optgroup_columns .optgroup-header{border-top:0 none}.selectize-control.plugin-remove_button .item{display:inline-flex;align-items:center;padding-right:0 !important}.selectize-control.plugin-remove_button .item .remove{color:inherit;text-decoration:none;vertical-align:middle;display:inline-block;padding:1px 5px;border-left:1px solid #dee2e6;border-radius:0 2px 2px 0;box-sizing:border-box;margin-left:5px}.selectize-control.plugin-remove_button .item .remove:hover{background:rgba(0,0,0,0.05)}.selectize-control.plugin-remove_button .item.active .remove{border-left-color:rgba(0,0,0,0)}.selectize-control.plugin-remove_button .disabled .item .remove:hover{background:0}.selectize-control.plugin-remove_button .disabled .item .remove{border-left-color:white}
+    </style>
+    <style>
+        .gu-mirror{position:fixed!important;margin:0!important;z-index:9999!important;opacity:.8}.gu-hide{display:none!important}.gu-unselectable{-webkit-user-select:none!important;-moz-user-select:none!important;-ms-user-select:none!important;user-select:none!important}.gu-transit{opacity:.2}
+    </style>
+    <style>
+        .loading-content {
+            padding-top: 47vh;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 999;
+            text-align: center;
+        }
+        .bg-warning {
+                background-color: orangered !important;
+        }
+        .loading-container {
+            position: absolute;
+            z-index: 998;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            transition: -webkit-filter ease-out 2s;
+            text-align: center;
+            display: none;
+        }
+        .loading-container-active {
+            transition: -webkit-filter 2s ease-out;
+            filter: blur(2px);
+            background: rgba(33, 37, 41, 0.65);
+        }
+
+        .cardy-boi {
+            padding: 0;
+            cursor: grab;
+        }
+
+        .cardy-boi:active {
+            cursor: grabbing;
+        }
+
+        .cardy-boi-dropdown:active {
+            cursor: grabbing;
+        }
+
+        .cardy-boi .input-group {
+            margin-bottom: 0 !important;
+        }
+        .hide-action-button {
+            display: none !important;
+        }
+        .monospaced-text {
+            font-family: monospace !important;
+        }
+        .manage-btn {
+            border-bottom: 3px solid darkslategray;
+        }
+        .marginable {
+            margin-top: 0px;
+        }
+        .sidepanes {
+            display: none;
+        }
+        .show-sidepane {
+            display: block !important;
+        }
+        .member-drag {
+            min-height: 15vh;
+            background: #1d1d1d;
+            /** border-radius: 10px; **/
+            padding: 25px 10px;
+            margin: 1px;
+        }
+
+        .btn-block {
+            display: block;
+        }
+
+         .pending-change {
+            animation: pulse 2s infinite;
+         }
+
+         @keyframes pulse {
+	0% {
+		//transform: scale(0.95);
+		box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.7);
+        opacity: 0.5;
+	}
+
+	70% {
+		//transform: scale(1);
+		box-shadow: 0 0 0 10px rgba(0, 0, 0, 0);
+        opacity: 0.75;
+	}
+
+	100% {
+		//transform: scale(0.95);
+		box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+        opacity: 0.5;
+	}
+}
+
+    </style>
+    <script type="text/javascript">
+        (function ($) {
+
+     $.fn.serialize = function (options) {
+         return $.param(this.serializeArray(options));
+     };
+
+     $.fn.serializeArray = function (options) {
+         var o = $.extend({
+         checkboxesAsBools: true
+     }, options || {});
+
+     var rselectTextarea = /select|textarea/i;
+     var rinput = /text|hidden|password|search/i;
+
+     return this.map(function () {
+         return this.elements ? $.makeArray(this.elements) : this;
+     })
+     .filter(function () {
+         return this.name && !this.disabled &&
+             (this.checked
+             || (o.checkboxesAsBools && this.type === 'checkbox')
+             || rselectTextarea.test(this.nodeName)
+             || rinput.test(this.type));
+         })
+         .map(function (i, elem) {
+             var val = $(this).val();
+             return val == null ?
+             null :
+             $.isArray(val) ?
+             $.map(val, function (val, i) {
+                 return { name: elem.name, value: val };
+             }) :
+             {
+                 name: elem.name,
+                 value: (o.checkboxesAsBools && this.type === 'checkbox') ? //moar ternaries!
+                        (this.checked ? 'true' : 'false') :
+                        val
+             };
+         }).get();
+     };
+
+})(jQuery);
+    </script>
+    <script type="text/javascript">
+        /*jslint browser: true*/
+/*jslint jquery: true*/
+
+/*
+ * jQuery Hotkeys Plugin
+ * Copyright 2010, John Resig
+ * Dual licensed under the MIT or GPL Version 2 licenses.
+ *
+ * Based upon the plugin by Tzury Bar Yochay:
+ * https://github.com/tzuryby/jquery.hotkeys
+ *
+ * Original idea by:
+ * Binny V A, http://www.openjs.com/scripts/events/keyboard_shortcuts/
+ */
+
+/*
+ * One small change is: now keys are passed by object { keys: '...' }
+ * Might be useful, when you want to pass some other data to your handler
+ */
+
+(function(jQuery) {
+
+  jQuery.hotkeys = {
+    version: "0.2.0",
+
+    specialKeys: {
+      8: "backspace",
+      9: "tab",
+      10: "return",
+      13: "return",
+      16: "shift",
+      17: "ctrl",
+      18: "alt",
+      19: "pause",
+      20: "capslock",
+      27: "esc",
+      32: "space",
+      33: "pageup",
+      34: "pagedown",
+      35: "end",
+      36: "home",
+      37: "left",
+      38: "up",
+      39: "right",
+      40: "down",
+      45: "insert",
+      46: "del",
+      59: ";",
+      61: "=",
+      96: "0",
+      97: "1",
+      98: "2",
+      99: "3",
+      100: "4",
+      101: "5",
+      102: "6",
+      103: "7",
+      104: "8",
+      105: "9",
+      106: "*",
+      107: "+",
+      109: "-",
+      110: ".",
+      111: "/",
+      112: "f1",
+      113: "f2",
+      114: "f3",
+      115: "f4",
+      116: "f5",
+      117: "f6",
+      118: "f7",
+      119: "f8",
+      120: "f9",
+      121: "f10",
+      122: "f11",
+      123: "f12",
+      144: "numlock",
+      145: "scroll",
+      173: "-",
+      186: ";",
+      187: "=",
+      188: ",",
+      189: "-",
+      190: ".",
+      191: "/",
+      192: "`",
+      219: "[",
+      220: "\\",
+      221: "]",
+      222: "'"
+    },
+
+    shiftNums: {
+      "`": "~",
+      "1": "!",
+      "2": "@",
+      "3": "#",
+      "4": "$",
+      "5": "%",
+      "6": "^",
+      "7": "&",
+      "8": "*",
+      "9": "(",
+      "0": ")",
+      "-": "_",
+      "=": "+",
+      ";": ": ",
+      "'": "\"",
+      ",": "<",
+      ".": ">",
+      "/": "?",
+      "\\": "|"
+    },
+
+    // excludes: button, checkbox, file, hidden, image, password, radio, reset, search, submit, url
+    textAcceptingInputTypes: [
+      "text", "password", "number", "email", "url", "range", "date", "month", "week", "time", "datetime",
+      "datetime-local", "search", "color", "tel"],
+
+    // default input types not to bind to unless bound directly
+    textInputTypes: /textarea|input|select/i,
+
+    options: {
+      filterInputAcceptingElements: true,
+      filterTextInputs: true,
+      filterContentEditable: true
+    }
+  };
+
+  function keyHandler(handleObj) {
+    if (typeof handleObj.data === "string") {
+      handleObj.data = {
+        keys: handleObj.data
+      };
+    }
+
+    // Only care when a possible input has been specified
+    if (!handleObj.data || !handleObj.data.keys || typeof handleObj.data.keys !== "string") {
+      return;
+    }
+
+    var origHandler = handleObj.handler,
+      keys = handleObj.data.keys.toLowerCase().split(" ");
+
+    handleObj.handler = function(event) {
+      //      Don't fire in text-accepting inputs that we didn't directly bind to
+      if (this !== event.target &&
+        (jQuery.hotkeys.options.filterInputAcceptingElements &&
+          jQuery.hotkeys.textInputTypes.test(event.target.nodeName) ||
+          (jQuery.hotkeys.options.filterContentEditable && jQuery(event.target).attr('contenteditable')) ||
+          (jQuery.hotkeys.options.filterTextInputs &&
+            jQuery.inArray(event.target.type, jQuery.hotkeys.textAcceptingInputTypes) > -1))) {
+        return;
+      }
+
+      var special = event.type !== "keypress" && jQuery.hotkeys.specialKeys[event.which],
+        character = String.fromCharCode(event.which).toLowerCase(),
+        modif = "",
+        possible = {};
+
+      jQuery.each(["alt", "ctrl", "shift"], function(index, specialKey) {
+
+        if (event[specialKey + 'Key'] && special !== specialKey) {
+          modif += specialKey + '+';
+        }
+      });
+
+      // metaKey is triggered off ctrlKey erronously
+      if (event.metaKey && !event.ctrlKey && special !== "meta") {
+        modif += "meta+";
+      }
+
+      if (event.metaKey && special !== "meta" && modif.indexOf("alt+ctrl+shift+") > -1) {
+        modif = modif.replace("alt+ctrl+shift+", "hyper+");
+      }
+
+      if (special) {
+        possible[modif + special] = true;
+      }
+      else {
+        possible[modif + character] = true;
+        possible[modif + jQuery.hotkeys.shiftNums[character]] = true;
+
+        // "$" can be triggered as "Shift+4" or "Shift+$" or just "$"
+        if (modif === "shift+") {
+          possible[jQuery.hotkeys.shiftNums[character]] = true;
+        }
+      }
+
+      for (var i = 0, l = keys.length; i < l; i++) {
+        if (possible[keys[i]]) {
+          return origHandler.apply(this, arguments);
+        }
+      }
+    };
+  }
+
+  jQuery.each(["keydown", "keyup", "keypress"], function() {
+    jQuery.event.special[this] = {
+      add: keyHandler
+    };
+  });
+
+})(jQuery || this.jQuery || window.jQuery);
+    </script>
+</head>
+<body data-bs-theme="dark">
+    {% block content %}
+    {% endblock %}
+</body>
+</html>

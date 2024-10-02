@@ -1,0 +1,25 @@
+<table class="table table-dark table-sm">
+    <thead>
+        <tr>
+            <th>Key</th>
+            <th>Statuses</th>
+            <th>&nbsp;</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for kiosk in kiosks %}
+            <tr>
+                <td>
+                    <a href="https://rosterboard.jouleworks.net/board/{{ kiosk.event.key }}/kiosk/{{ kiosk.pk }}/" target="_blank">https://rosterboard.jouleworks.net/board/{{ kiosk.event.key }}/kiosk/{{ kiosk.pk }}/</a>
+                </td>
+                <td>
+                    Check In Status: {{ kiosk.check_in_status }}<br>
+                    Check In Duty: {{ kiosk.check_in_duty }}<br>
+                    Check Out Status: {{ kiosk.check_out_status }}<br>
+                    Check Out Duty: {{ kiosk.check_out_duty }}<br>
+                </td>
+                <td><a href="javascript:///" class="btn btn-default btn-sm edit-action" onclick="startEdit('kiosk', '{{ kiosk.pk }}')" data-modal="kiosk" data-pk="{{ kiosk.pk }}">Edit</a> <a href="javascript:///" class="btn btn-default btn-sm delete-action" onclick="startDelete('kiosk', '{{ kiosk.pk }}')" data-modal="kiosk" data-pk="{{ kiosk.pk }}">Delete</a></td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>

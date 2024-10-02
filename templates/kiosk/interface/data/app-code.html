@@ -1,0 +1,200 @@
+<script type="text/javascript">
+    function logout() {
+        window.location.reload();
+    }
+    $(document).ready(function () {
+
+        let isFocused = true;
+        let inputcode = "";
+
+        let loginData = {};
+
+        function hideBarcodeProcessingSpinner() {
+            $("#barcode-processing").hide();
+        }
+
+        let toastNum = 0;
+
+        function loadWorkspace(id) {
+            $(".workspaces").hide();
+            $("#workspace-" + id).show();
+        }
+
+        function setAutomatedCheck(status, duty = null) {
+            setStatus(status, false);
+            if(duty !== null){
+                setDuty(duty, true);
+            }else{
+                if(loginData.kiosk.automated_check_in_out){
+                    loadWorkspace("splash");
+                    hideBarcodeProcessingSpinner();
+                }else{
+                    renderFromBadge(inputcode);
+                    loadWorkspace("step1");
+                }
+
+            }
+        }
+
+        function setStatus(status, doLoad = true) {
+            loadWorkspace("processing");
+            $.get('set/' + inputcode + '/status/' + status + '/', function (res) {
+                showToast("Set Status Successfully.");
+                if(doLoad) {
+                    renderFromBadge(inputcode);
+                }
+            })
+
+        }
+
+        function setDuty(duty, doLoad = true) {
+            loadWorkspace("processing");
+            $.get('set/' + inputcode + '/duty/' + duty + '/', function (res) {
+                showToast("Set Duty Successfully.");
+                if(doLoad){
+                    renderFromBadge(inputcode);
+                }
+            })
+        }
+
+        function renderFromBadge(inpcode) {
+            inputcode = inpcode;
+            console.log(inputcode);
+            $("#barcodeinput").val("");
+            $("#barcode-processing").show();
+            $.get("badge/" + inputcode + "/", function (res) {
+                $("#workspace-splash").hide();
+                loginData = res;
+
+                if(loginData.kiosk.single_state_only && loginData.kiosk.automated_check_in_out){
+                    if(loginData.kiosk.check_in_status === null){
+                        setAutomatedCheck(loginData.check_out_status.id, loginData.check_out_duty.id || null)
+                    }else{
+                        setAutomatedCheck(loginData.check_out_status.id, loginData.check_out_duty.id || null)
+                    }
+                }else{
+                    if (loginData.kiosk.check_in_status === null) {
+                    $("#check-in-workspace-button").hide();
+                } else {
+                    $("#check-in-status").text("(" + loginData.kiosk.check_in_status.key + " - " + loginData.kiosk.check_in_status.name + ")")
+                    if (loginData.kiosk.check_in_duty !== null) {
+                        $("#check-in-duty").text("(" + loginData.kiosk.check_in_duty.key + " - " + loginData.kiosk.check_in_duty.name + ")")
+                    }
+                }
+                if (loginData.kiosk.check_out_status === null) {
+                    $("#check-out-workspace-button").hide();
+                } else {
+                    $("#check-out-status").text("(" + loginData.kiosk.check_out_status.key + " - " + loginData.kiosk.check_out_status.name + ")")
+                    if (loginData.kiosk.check_out_duty !== null) {
+                        $("#check-out-duty").text("(" + loginData.kiosk.check_out_duty.key + " - " + loginData.kiosk.check_out_duty.name + ")")
+                    }
+                }
+
+                if (!loginData.kiosk.allow_duty_selection || loginData.kiosk.single_state_only) {
+                    $("#duty-change-button").hide();
+                }
+                if (!loginData.kiosk.allow_status_selection || loginData.kiosk.single_state_only) {
+                    $("#status-change-button").hide();
+                }
+
+                populateUserData();
+
+                loadWorkspace("step1");
+                }
+
+
+            }).fail(function (e) {
+            console.log(e);
+            $("#barcode-processing").hide();
+            showToast("Could not find badge number.");
+        });
+        }
+
+        function loadStatuses() {
+            $("#status-list").html("");
+            $.get('statuses/', function (data) {
+                for (let i = 0; i < data.statuses.length; i++) {
+                    $("#status-list").append(`<div class='col-md-3'>
+                        <a href="javascript:///" class="btn btn-secondary btn-block set-status" style="margin: 10px;" data-id="${data.statuses[i].id}">${data.statuses[i].key} - ${data.statuses[i].name}</a>
+                    </div>`);
+                }
+
+                $(".set-status").on('click', function (event) {
+                    setStatus($(event.target).attr("data-id"));
+                })
+            })
+        }
+
+        function loadDuties() {
+            $("#duty-list").html("");
+            $.get('duties/', function (data) {
+                for (let i = 0; i < data.duties.length; i++) {
+                    $("#duty-list").append(`<div class='col-md-3'>
+                        <a href="javascript:///" class="btn btn-secondary btn-block set-duty" style="margin: 10px;" data-id="${data.duties[i].id}">${data.duties[i].key} - ${data.duties[i].name}</a>
+                    </div>`)
+                }
+                $(".set-duty").on('click', function (event) {
+                    setDuty($(event.target).attr("data-id"));
+                })
+            })
+        }
+
+        function showToast(message) {
+            $("body").prepend(`<div class="toast show outline-error" id="toast-${toastNum}" style="position: absolute;">
+              <div class="toast-header">
+                Information
+                <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+              </div>
+              <div class="toast-body">
+                ${message}
+              </div>
+            </div>`);
+            let cToastNum = toastNum;
+            toastNum++;
+            setTimeout(() => {
+                $("#toast-" + cToastNum).remove();
+            }, 5000);
+        }
+
+        $("#barcodeinput").focus();
+
+        $("#barcodeinput").on("focusout", function (event) {
+            isFocused = false;
+        })
+
+        function populateUserData() {
+            $(".member-name").text(loginData.member.name);
+            $(".member-duty").text(loginData.member.duty.key + " - " + loginData.member.duty.name);
+            $(".member-status").text(loginData.member.status.key + " - " + loginData.member.status.name);
+            $(".member-rank").text(loginData.member.rank.key + " - " + loginData.member.rank.name);
+        }
+
+        $(document).on('keyup', function (event) {
+            if (!isFocused) {
+                $("#barcodeinput").val(event.originalEvent.key);
+                $("#barcodeinput").focus();
+                isFocused = true;
+            }
+            if (event.originalEvent.key === "Enter") {
+                // do barcode processing.
+                renderFromBadge($("#barcodeinput").val());
+            }
+        })
+
+        $("#duty-change-button").on("click", function(event){
+            loadDuties();
+            loadWorkspace("duties");
+        })
+
+        $("#status-change-button").on("click", function(event){
+            loadStatuses();
+            loadWorkspace("statuses");
+        })
+
+        $(".back-step1-button").on("click", function(event) {
+            loadWorkspace("step1");
+        })
+
+        loadWorkspace("");
+    })
+</script>

@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="text-center container jumbotron">
+        <h3 style="margin: 10px 0; text-align: center;">{{ event.name }}</h3>
+        <h4 style="margin: 10px 0; text-align: center;" id="datetimeclock">DAY 00:00:00</h4>
+    </div>
+    <div class="container text-center" id="workspace">
+        <div class="spinner-border" role="status" style="margin-top: 35vh;">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <p>Setting up...</p>
+    </div>
+    
+    
+    <script type="text/javascript">
+
+            function makeid(length) {
+            let result = '';
+            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            const charactersLength = characters.length;
+            let counter = 0;
+            while (counter < length) {
+              result += characters.charAt(Math.floor(Math.random() * charactersLength));
+              counter += 1;
+            }
+            return result;
+        }
+
+        let column_colors = {
+            A: 'bg-success',
+            C: 'bg-warning',
+            X: 'bg-danger',
+            Y: 'bg-primary',
+            Z: 'bg-dark text-white'
+        }
+
+        const clientId = localStorage.getItem('rosterboard-client-id-kiosk') || localStorage.setItem('rosterboard-client-id-kiosk', makeid(10));
+        if(clientId === undefined) {
+            window.location.reload();
+        }
+        console.log("Rosterboard Multiplayer ID (Kiosk): " + clientId);
+
+    $(document).ready(function () {
+        function decideDay(day){
+            switch(day) {
+                case 0:
+                    return "SUN";
+                case 1:
+                    return "MON";
+                case 2:
+                    return "TUE";
+                case 3:
+                    return "WED";
+                case 4:
+                    return "THUR";
+                case 5:
+                    return "FRI";
+                case 6:
+                    return "SAT";
+            }
+        }
+
+        let settings = {};
+
+        $.get('data/', function(data) {
+            settings = data.kiosk;
+            console.log("Settings Loaded", settings);
+            
+            // single_state && !automated - checkin or checkout, manager window
+            // !single_state && automated - checkin/checkout
+            // single_state && automated - checkin or checkout, no confirmation
+            // !single_state && !automated - full manage
+            
+            
+            if(settings.single_state_only && !settings.automated_check_in_out){
+                $.get('state/main__self_manage/', function(html) {
+                    $("#workspace").html(html);
+                });
+            }
+            
+            if(!settings.single_state_only && !settings.automated_check_in_out){
+                $.get('state/main__manager/', function(html) {
+                    $("#workspace").html(html);
+                });
+            }
+            
+            if(settings.single_state_only && settings.automated_check_in_out){
+                $.get('state/main__single_action/', function(html) {
+                    $("#workspace").html(html);
+                });
+            }
+
+            if(!settings.single_state_only && settings.automated_check_in_out){
+                $.get('state/main__checkin_checkout/', function(html) {
+                    $("#workspace").html(html);
+                });
+            }
+
+        })
+
+        let v = setInterval( () => {
+            let now = new Date();
+            document.querySelector("#datetimeclock").innerHTML = decideDay(now.getDay()) + " " + now.getHours().toString().padStart(2,"0") + ":" + now.getMinutes().toString().padStart(2,"0") + ":" + now.getSeconds().toString().padStart(2,"0");
+        },1000);
+
+        const roomName = '{{ event.key }}';
+
+        let chatSocket = null;
+
+        function startWebsocket() {
+            chatSocket = new WebSocket(
+                {% if request.scheme == "https" %}'wss://'{% else %}'ws://'{% endif %}
+                + window.location.host
+                + '/ws/chat/'
+                + roomName
+                + '/'
+            );
+            console.log("Setting up websocket...");
+            chatSocket.onmessage = function(e) {
+            const data = JSON.parse(e.data);
+            console.log('ws', data);
+            switch(data.type){
+                case 'boards.reloadall':
+                    window.location.reload();
+                    break;
+                }
+            };
+
+            $(document).on('click', '.reloader-button', function () {
+                issueReloadAll()
+            })
+
+
+
+            chatSocket.onclose = function(e) {
+                console.error('Chat socket closed unexpectedly');
+                /**
+                if (!firstTime){
+                    initialRenderMemberCards();
+                    reloadStatusesToCommandPallete();
+                    reloadTasksToCommandPallete();
+                    switchSidepane();
+                    firstTime = true;
+                    setTimeout(function() {
+                        if($("#status_columns").html() === ""){
+                            $("#status_columns").append("<h1>We've lost connection to the server. Reload this page and try again.</h1>");
+                            setInterval(function() {
+                                $.get('api/members/', function(e){
+                                    window.location.reload();
+                                });
+                            }, 5000);
+                        }
+                    }, 5000)
+                } **/
+                setTimeout(function() {
+                    startWebsocket();
+                },100)
+            };
+        }
+
+        startWebsocket();
+    })
+    </script>
+{% endblock %}

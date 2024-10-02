@@ -1,0 +1,22 @@
+{% extends 'ui/base.html' %}
+{% block content %}
+    <h3 class="page-header">Available Event Boards <small><a class="btn btn-success btn-sm" href="{% url "new" %}">+ Event</a></small></h3>
+    <table class="table table-condensed">
+        <thead>
+            <tr>
+                <th>Event</th>
+                <th>Key</th>
+                <th>&nbsp;</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for event in access %}
+            <tr>
+                <td>{{ event.board.name }}</td>
+                <td>{{ event.board.key }}</td>
+                <td style="text-align: right"><a target="_blank" href="/board/{{ event.board.key }}/" class="btn btn-info"><i class="fa-solid fa-tachograph-digital"></i></a></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

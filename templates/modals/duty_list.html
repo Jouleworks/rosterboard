@@ -1,0 +1,18 @@
+<table class="table table-dark table-sm">
+    <thead>
+        <tr>
+            <th>Key</th>
+            <th>Name</th>
+            <th>&nbsp;</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for member in duties %}
+            <tr>
+                <td>{{ member.key }}</td>
+                <td>{{ member.name }}</td>
+                <td><a href="javascript:///" class="btn btn-default btn-sm edit-action" onclick="startEdit('duty', '{{ member.pk }}')" data-modal="duty" data-pk="{{ member.pk }}">Edit</a> <a href="javascript:///" class="btn btn-default btn-sm delete-action" onclick="startDelete('duty', '{{ member.pk }}')" data-modal="duty" data-pk="{{ member.pk }}">Delete</a></td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>

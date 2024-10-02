@@ -1,0 +1,20 @@
+<table class="table table-dark table-sm">
+    <thead>
+        <tr>
+            <th>Key</th>
+            <th>Name</th>
+            <th>Show on Sidebar</th>
+            <th>&nbsp;</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for member in ranks %}
+            <tr>
+                <td>{{ member.key }}</td>
+                <td>{{ member.name }}</td>
+                <td>{{ member.displayOnSidebar }}</td>
+                <td><a href="javascript:///" class="btn btn-default btn-sm edit-action" onclick="startEdit('rank', '{{ member.pk }}')" data-modal="rank" data-pk="{{ member.pk }}">Edit</a> <a href="javascript:///" class="btn btn-default btn-sm delete-action" onclick="startDelete('rank', '{{ member.pk }}')" data-modal="rank" data-pk="{{ member.pk }}">Delete</a></td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>

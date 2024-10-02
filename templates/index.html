@@ -1,0 +1,687 @@
+{% extends 'layout.html' %}
+{% block content %}
+    <div class="loading-content">
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+    <div class="loading-container loading-container-active">
+
+    </div>
+    <div class="row loading-container-active" style="margin: 10px;">
+    <div class="col-md-10 loading-container-active">
+    <div class="row loading-container-active" id="status_columns">
+
+    </div>
+    <hr>
+    <p style="font-size: 10px;" class="text-muted">v1.0</p>
+   <div class="row loading-container-active" id="aux_columns">
+
+    </div>
+
+    </div>
+    <div class="col-md-2 loading-container-active">
+        <div id="sidepane__main" class="sidepanes loading-container-active">
+            <div class="row">
+                <div class="col-md-4">
+                    <a href="/" class="btn btn-danger" style="margin-bottom: 0.5em; min-width: 45px;"><i class="fa-solid fa-xmark"></i></a>
+                </div>
+                <div class="col-md-4" style="text-align: center">
+                    <a href="javascript:///" id="timesheets_btn" class="btn btn-warning" style="margin-bottom: 0.5em; min-width: 45px;"><i class="fa-solid fa-table-list"></i></a>
+                </div>
+                <div class="col-md-4">
+                    <a href="javascript:///" id="manage_board_btn" class="btn btn-primary" onclick="loadSettings()" style="margin-bottom: 0.5em; float: right; min-width: 45px;"><i class="fa-solid fa-gears"></i></a>
+                </div>
+            </div>
+
+
+        <h5 style="margin: 10px 0; text-align: left;">{{ event.name }}</h5>
+            <h4 style="margin: 10px 0; text-align: left;" id="datetimeclock">DAY 00:00:00</h4>
+            <div id="sidepane__main_body" class="loading-container-active">
+
+            </div>
+            <hr>
+            <div id="sidepane__main_event_details" class="loading-container-active">
+
+            </div>
+        </div>
+        <div id="sidepane__settings" class="sidepanes">
+            <a href="javascript:///" id="sidepane__btn_load_main" class="btn btn-primary btn-block" style="margin-bottom: 0.5em;" onclick="backToMain()"><i class="fa-solid fa-arrow-left"></i> Back</a>
+            <div id="sidepane__settings_body">
+
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <script type="text/javascript">
+
+        function decideDay(day){
+            switch(day) {
+                case 0:
+                    return "SUN";
+                case 1:
+                    return "MON";
+                case 2:
+                    return "TUE";
+                case 3:
+                    return "WED";
+                case 4:
+                    return "THUR";
+                case 5:
+                    return "FRI";
+                case 6:
+                    return "SAT";
+            }
+        }
+
+        let v = setInterval( () => {
+            let now = new Date();
+            document.querySelector("#datetimeclock").innerHTML = decideDay(now.getDay()) + " " + now.getHours().toString().padStart(2,"0") + ":" + now.getMinutes().toString().padStart(2,"0") + ":" + now.getSeconds().toString().padStart(2,"0");
+        },1000);
+
+        function switchSidepane(name='main') {
+            $('.sidepanes').removeClass('show-sidepane');
+            $('#sidepane__'+name).addClass('show-sidepane');
+        }
+        function loadSettings(){
+            $.get('modals/settings/', function(data) {
+                $("#sidepane__settings_body").html(data);
+                switchSidepane("settings");
+            })
+        }
+
+        function loadSidepaneMainBody() {
+            $.get('modals/sidebar/', function(data) {
+                $("#sidepane__main_body").html(data);
+            })
+            loadSidepaneDetails();
+        }
+
+        function loadSidepaneDetails() {
+            $.get('modals/event/details/', function(data) {
+                $("#sidepane__main_event_details").html(data);
+            })
+        }
+
+        $(document).on('click', '#timesheets_btn', function(e) {
+            $("#timesheetModal").toggle();
+            $.get("timesheets/", function(html) {
+                $("#timesheetModalBody").html(html);
+            })
+                
+        })
+
+        $(document).on('click', '.timesheet-close', function(e) {
+            $("#timesheetModal").toggle();
+        })
+
+        function backToMain(){
+
+            $(document).off("click", ".delete-action", function(event) {
+                console.log("Disengaged Delete Actor")
+            }).off("click", ".edit-action", function(event) {
+                console.log("Disengaged Edit Actor")
+            }).off("click", "#loadListStatuses", function(event) {
+                console.log("Unloaded loadListStatuses");
+            }).off("click", "#loadAddStatuses", function(event) {
+                console.log("Unloaded loadAddStatuses");
+            }).off("click", "#loadListRanks", function(event) {
+                console.log("Unloaded loadListRanks");
+            }).off("click", "#loadAddRanks", function(event) {
+                console.log("Unloaded loadAddRanks");
+            }).off("click", "#loadAddMembers", function(event) {
+                console.log("Unloaded loadAddMembers");
+            }).off("click", "#loadListMembers", function(event) {
+                console.log("Unloaded loadListMembers");
+            }).off("click", "#manage_members", function(event) {
+                console.log("Unloaded manage_members");
+            }).off("click", "#manage_ranks", function(event) {
+                console.log("Unloaded manage_ranks");
+            }).off("click", "#manage_statuses", function(event) {
+                console.log("Unloaded manage_statuses");
+            })
+
+            loadMainContent();
+
+            switchSidepane("main");
+
+        }
+
+        function loadMainContent() {
+            $.get('modals/event/details/', function(data) {
+                $("#sidepane__main_event_details").html(data);
+            })
+        }
+
+        function executeBulkAction(){
+            let $nname = $('#name_container').val();
+            let $nstat = $('#status_container').val();
+            let $ntask = $('#task_container').val();
+
+            let namearray = $nname.split(',');
+            let pkg = {
+                names: namearray,
+                status: $nstat,
+                task: $ntask,
+                content: $("#content_container").val()
+            }
+            console.log(pkg);
+            $.post('api/post/bulk/', pkg, function(data) {
+                $("#exampleModal").hide();
+            })
+        }
+        
+        loadMainContent();
+
+    $(document).ready(function() {
+
+        let members = [];
+        let tasks = [];
+
+        let locklog = [];
+
+        let default_options = {
+          maxItems: null,
+          valueField: 'id',
+          labelField: 'title',
+          searchField: 'title',
+          selectOnTab: false,
+          options: [],
+          create: false
+        };
+
+        let default_options_single = {
+          maxItems: 1,
+          valueField: 'id',
+          labelField: 'title',
+          searchField: 'title',
+          selectOnTab: false,
+          options: [],
+          create: false
+        };
+
+        var $name_select = $('#name_container').selectize(default_options);
+        var $status_select = $('#status_container').selectize(default_options_single);
+        var $duty_select = $('#task_container').selectize(default_options_single);
+
+        $(document).on('change', '#status_container', function(target){
+            console.log(target.target.value);
+        })
+        let dragqueen = null;
+        function showCallWindow(){
+
+        }
+
+        function renderTaskList(userId=null){
+
+            let s = "";
+
+            for (let i = 0; i < tasks.length; i++) {
+                s += "<li data-id='"+tasks[i].id+"' class='task-dropdown-selector'><a class='dropdown-item change-task-dropdown-link' href='javascript:///' data-task-id='"+tasks[i].id+"' data-user-id='"+userId+"'>"+tasks[i].key + ' - ' +tasks[i].name+"</a></li>"
+            }
+
+            return s;
+        }
+
+        function loadColumns() {
+            $("#status_columns").html("");
+            let row = 0;
+            let colCount = 0;
+            $.get('api/columns/', function(data) {
+
+                for (let i = 0; i < data.length; i++) {
+                    if(colCount == 0){
+                        $("#status_columns").append("<div class='row' id='status_row_"+row+"' style='display: flex'></div>");
+                    }
+                    if(data[i].length > 0){
+                        $("#status_row_"+row).append("<div class='col-md-4' data-columnmode='main' id='status-col-"+i+"'></div>")
+                        colCount++;
+                        for (let j = 0; j < data[i].length; j++) {
+                            $("#status-col-"+i).append("<h3 style='margin-top: 5px;'>"+data[i][j].key + " - "+data[i][j].name+"</h3><div data-columnmode='main' data-pk='"+data[i][j].id+"' style='display: block;' class='member-drag row draggable-column' id='status-list-pk-"+data[i][j].id+"'></div>")
+                        }
+
+                        if(colCount == 3) {
+                            row++;
+                            colCount = 0;
+                        }
+                    }
+                }
+            })
+        }
+
+        function loadAuxColumns() {
+            $("#aux_columns").html("");
+
+            $.get('api/aux/', function(data) {
+
+                for (let i = 0; i < data.length; i++) {
+                    if(data[i].length > 0){
+                        $("#aux_columns").append("<div class='col-md-6' data-columnmode='aux' id='status-col-"+i+"'></div>")
+
+                        for (let j = 0; j < data[i].length; j++) {
+                            $("#status-col-"+i).append("<h3 style='margin-top: 15px;'>"+data[i][j].key + " - "+data[i][j].name+"</h3><div data-columnmode='aux' data-pk='"+data[i][j].id+"' class='member-drag row draggable-column' id='status-list-pk-"+data[i][j].id+"'></div>")
+                        }
+                    }
+                }
+            })
+        }
+
+        let column_colors = {
+            A: 'bg-success',
+            C: 'bg-warning',
+            X: 'bg-danger',
+            Y: 'bg-primary',
+            Z: 'bg-dark text-white'
+        }
+
+        function renderHV(data) {
+            let hv = {% if event.highVolumeMode == True %}true{% else %}false{% endif %};
+            if(hv) {
+                if (data.volumeRole !== null) {
+                    return "<span class='input-group-text " + column_colors[data.status.key] + "' id='inputGroup-sizing-sm'>" + data.volumeRole.key + "</span>"
+                }
+            }
+            return "";
+        }
+
+        function renderCardTemplate(data, template_classes='col-md-12') {
+
+            //return "<div class='"+template_classes+"' style='padding: 0.5em;' id='card-member-"+data.id+"' data-pk='"+data.id+"'><div class='card member "+column_colors[data.status.key]+"' data-id='"+data.id+"'><div class='card-body'> <p class='card-title'>"+data.name+"</p> <p class='card-text'><span class='badge text-white' style='background: "+data.duty.color+";'>"+data.duty.key+" - "+data.duty.name+"</span></p></div></div>"
+            return "<div class='cardy-boi "+template_classes+"' id='card-member-"+data.id+"' data-pk='"+data.id+"'><div class='input-group input-group-sm mb-3 "+column_colors[data.status.key]+"'><span class='input-group-text monospaced-text "+column_colors[data.status.key]+"' id='inputGroup-sizing-sm'>"+data.rank.key+"</span>"+renderHV(data)+"<span class='input-group-text "+column_colors[data.status.key]+"' id='inputGroup-sizing-sm'>"+data.name+"</span><input type='text' data-user-id='"+ data.id +"' class='notes-input-field form-control "+column_colors[data.status.key]+"' value='"+data.details+"' aria-label='Sizing example input' aria-describedby='inputGroup-sizing-sm'><button class='btn cardy-boi-dropdown btn-sm '"+column_colors[data.status.key]+"' dropdown-toggle' type='button' data-bs-toggle='dropdown' aria-expanded='false'>"+data.duty.key+" - "+data.duty.name+"</button><ul class='dropdown-menu dropdown-menu-end' data-user-id='"+data.id+"' style=''>"+renderTaskList(data.id)+"</ul></div>"
+        }
+
+
+        function initialRenderMemberCards() {
+
+            loadColumns();
+            loadAuxColumns();
+            setTimeout(function () {
+                $.get('api/members/', function(data) {
+
+                    members = data;
+
+                    for (let i = 0; i < data.length; i++) {
+                        $("#status-list-pk-"+data[i].status.id).append(renderCardTemplate(data[i], data[i].status.hideFromColumns ? 'col-md-12 text-white marginable' : 'col-md-12 marginable'))
+                    }
+
+                    reloadMembersToCommandPallete(members);
+
+                    var draggables = $(".draggable-column");
+                    console.log(draggables[0].id);
+                    var lst = [];
+                    for (let i = 0; i < draggables.length; i++) {
+                        lst.push(draggables[i])
+                    }
+
+                    dragqueen = dragula(lst, {
+                        revertOnSpill: true
+                    });
+
+                    dragqueen.on('drop', function(el, container, source) {
+
+                        console.log(el, container, source);
+                        let user_id = el.getAttribute('data-pk');
+                        let new_status = container.getAttribute('data-pk');
+                        
+                        console.log(user_id, new_status);
+                        $(el).children(".input-group").addClass('pending-change');
+                        $.get('api/updateMember/'+user_id+'/status/'+new_status+'/', function(new_member_data) {
+
+                            $(el).html(renderCardTemplate(new_member_data, new_member_data.status.hideFromColumns ? 'col-md-12 text-white marginable' : 'col-md-12 marginable'))
+                            let msg = {
+                                "type": "action.move",
+                                "userid": user_id,
+                                "newstatus": new_status,
+                                "client": clientId
+                            }
+                            chatSocket.send(JSON.stringify(msg));
+                        })
+
+                    })
+
+                    chatSocket.send(JSON.stringify({
+                        'type': 'fetch.locklog',
+                        'client': clientId,
+                    }));
+
+                    // right here is where everything is definitely loaded.
+                    $(".loading-content").remove();
+                    $(".loading-container-active").removeClass("loading-container-active");
+                })
+            }, 1500);
+
+        }
+
+        $(document).on('click','.change-task-dropdown-link', function(e) {
+            let user_id = e.target.getAttribute('data-user-id');
+            let task_id = e.target.getAttribute('data-task-id');
+            console.log(user_id, task_id);
+            $("#card-member-"+user_id).children(".input-group").addClass('pending-change');
+            $.get('api/updateMember/'+user_id+'/duty/'+task_id+'/', function(new_member_data) {
+
+                $("#card-member-"+user_id).html(renderCardTemplate(new_member_data, new_member_data.status.hideFromColumns ? 'col-md-12 text-white marginable' : 'col-md-12 marginable'))
+                let msg = {
+                    "type": "user.inplacechange",
+                    "userid": user_id,
+                    "client": clientId
+                }
+                chatSocket.send(JSON.stringify(msg));
+            })
+        })
+
+        $(document).on('blur', '.notes-input-field', function (e) {
+            let user_id = e.target.getAttribute('data-user-id');
+            let task_id = $(e.target).val();
+            console.log(user_id, task_id);
+            $("#card-member-"+user_id).children(".input-group").addClass('pending-change');
+            $.post('api/updateMember/'+user_id+'/details/', {"details": task_id} , function(new_member_data) {
+
+                $("#card-member-"+user_id).html(renderCardTemplate(new_member_data, new_member_data.status.hideFromColumns ? 'col-md-12 text-white marginable' : 'col-md-12 marginable'))
+                let msg = {
+                    "type": "locklog.unlock",
+                    "userid": user_id,
+                    "lockedby": clientId
+                }
+                chatSocket.send(JSON.stringify(msg));
+            })
+        });
+
+        var eventIsHighVolume = "{{ event.highVolumeMode }}" === "True";
+
+        function addVolumeRolesToCommandPallete(){
+            if(eventIsHighVolume){
+                $.get('api/volumeRoles/', function(data) {
+                    for (let i = 0; i < data.length; i++) {
+                        $name_select[0].selectize.addOption({
+                            id: "v"+data[i].id,
+                            title: 'V - '+data[i].key
+                        })
+                    }
+                })
+            }
+        }
+
+        function reloadMembersToCommandPallete(mbrs=null) {
+
+            $name_select[0].selectize.clearOptions();
+            if(mbrs === null){
+                $.get('api/members/', function(data) {
+                    for (let i = 0; i < data.length; i++) {
+                        $name_select[0].selectize.addOption({
+                            id: "m"+data[i].id,
+                            title: 'M - '+data[i].name
+                        })
+                    }
+                    addVolumeRolesToCommandPallete();
+                })
+            }else {
+                for (let i = 0; i < mbrs.length; i++) {
+                    $name_select[0].selectize.addOption({
+                        id: 'm'+mbrs[i].id,
+                        title: 'M - '+mbrs[i].name
+                    })
+                }
+                addVolumeRolesToCommandPallete();
+            }
+        }
+
+        function reloadStatusesToCommandPallete() {
+
+            $status_select[0].selectize.clearOptions();
+
+            $.get('api/statuses/', function(data) {
+                for (let i = 0; i < data.length; i++) {
+                    $status_select[0].selectize.addOption({
+                        id: data[i].id,
+                        title: data[i].key + ' - ' + data[i].name
+                    })
+                }
+            })
+
+            /** $status_select[0].selectize.addOption({
+                id: 'nc',
+                title: 'NC - New Call'
+            }) **/
+        }
+
+        function makeid(length) {
+            let result = '';
+            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            const charactersLength = characters.length;
+            let counter = 0;
+            while (counter < length) {
+              result += characters.charAt(Math.floor(Math.random() * charactersLength));
+              counter += 1;
+            }
+            return result;
+        }
+
+        function lockMember(user_id) {
+            $("#card-member-"+user_id).children(".input-group").addClass('pending-change');
+        }
+        
+        function destroyMember(user_id) {
+            $("#card-member-"+user_id).remove();
+        }
+        
+        function createNewMember(new_member_data){
+            $("#status-list-pk-"+new_member_data.status.id).append(renderCardTemplate(new_member_data, new_member_data.status.hideFromColumns ? 'col-md-12 text-white marginable' : 'col-md-12 marginable'));
+        }
+        
+        function unlockMember(user_id, new_member_data) {
+            $("#card-member-"+user_id).html(renderCardTemplate(new_member_data, new_member_data.status.hideFromColumns ? 'col-md-12 text-white marginable' : 'col-md-12 marginable'))
+        }
+
+        function reloadTasksToCommandPallete() {
+
+            $duty_select[0].selectize.clearOptions();
+
+            $.get('api/tasks/', function(data) {
+
+                tasks = data;
+
+                for (let i = 0; i < data.length; i++) {
+                    $duty_select[0].selectize.addOption({
+                        id: data[i].id,
+                        title: data[i].key + ' - ' + data[i].name
+                    })
+                }
+            })
+        }
+
+        $(document).on('keydown', null, 'ctrl+k', function(event) {
+            $("#exampleModal").toggle();
+            $("#name_container").focus();
+        });
+        $(document).on('keydown', null, 'esc', function(event) {
+            if($name_select.val() === '' && $status_select.val() === '' && $duty_select.val() === ''){
+                $("#exampleModal").toggle();
+                $("#name_container").focus();
+            }else{
+                $name_select[0].selectize.setValue([]);
+                $status_select[0].selectize.setValue([]);
+                $duty_select[0].selectize.setValue([]);
+            }
+
+        })
+        $(document).on('keydown', null, '`', function(event) {
+            $("#exampleModal").toggle();
+            $("#name_container").focus();
+        })
+        
+        const roomName = '{{ event.key }}';
+
+        let chatSocket = null;
+
+        function startWebsocket() {
+            chatSocket = new WebSocket(
+                {% if request.scheme == "https" %}'wss://'{% else %}'ws://'{% endif %}
+                + window.location.host
+                + '/ws/chat/'
+                + roomName
+                + '/'
+            );
+            console.log("Setting up websocket...");
+            chatSocket.onmessage = function(e) {
+            const data = JSON.parse(e.data);
+            console.log('ws', data);
+            switch(data.type){
+                case 'locklog.lock':
+                    loadSidepaneMainBody();
+                    if(data.forClient !== clientId && data.success){
+                        lockMember(data.userid);
+                    }
+                    break;
+                case 'boards.reloadall':
+                    window.location.reload();
+                    break;
+                case 'locklog.unlock':
+                    loadSidepaneMainBody();
+                    if(data.success){
+                        unlockMember(data.userid, data.userdata);
+                    }
+                    break;
+                case 'action.move':
+                    loadSidepaneMainBody();
+                    if(data.client !== clientId && data.client !== "SAVEMODEL"){
+                        destroyMember(data.userid);
+                        createNewMember(data.userdata);
+                    }
+                    if(data.client === "SAVEMODEL"){
+                        $.get('api/member/'+data.userid+'/', function(newuserdata){
+                            destroyMember(data.userid);
+                            createNewMember(newuserdata);
+                        })
+                    }
+                    break;
+                case 'user.inplacechange':
+                    loadSidepaneMainBody();
+                    if(data.client !== clientId){
+                        unlockMember(data.userid, data.userdata);
+                    }
+                }
+            };
+
+            $(document).on('click', '.reloader-button', function () {
+                issueReloadAll()
+            })
+
+            chatSocket.onclose = function(e) {
+                console.error('Chat socket closed unexpectedly');
+                /**
+                if (!firstTime){
+                    initialRenderMemberCards();
+                    reloadStatusesToCommandPallete();
+                    reloadTasksToCommandPallete();
+                    switchSidepane();
+                    firstTime = true;
+                    setTimeout(function() {
+                        if($("#status_columns").html() === ""){
+                            $("#status_columns").append("<h1>We've lost connection to the server. Reload this page and try again.</h1>");
+                            setInterval(function() {
+                                $.get('api/members/', function(e){
+                                    window.location.reload();
+                                });
+                            }, 5000);
+                        }
+                    }, 5000)
+                } **/
+                setTimeout(function() {
+                    startWebsocket();
+                },100)
+            };
+        }
+
+        var firstTime = false;
+
+        const clientId = localStorage.getItem('rosterboard-client-id') || localStorage.setItem('rosterboard-client-id', makeid(10));
+        if(clientId === undefined) {
+            window.location.reload();
+        }
+        console.log("Rosterboard Multiplayer ID: " + clientId);
+
+
+        function issueReloadAll(){
+            let msg = {
+                "type": "boards.reloadall",
+                "client": clientId
+            }
+            chatSocket.send(JSON.stringify(msg));
+        }
+
+        $(document).on('focus', '.notes-input-field', function(e) {
+            let user_id = e.target.getAttribute('data-user-id');
+            let msg = {
+                "type": "locklog.lock",
+                "validuntil": Math.floor(new Date().getTime() / 1000) + 10,
+                "userid": user_id,
+                "lockedby": clientId
+            }
+            chatSocket.send(JSON.stringify(msg));
+        });
+
+
+        /** document.querySelector('#chat-message-submit').onclick = function(e) {
+            const messageInputDom = document.querySelector('#chat-message-input');
+            const message = messageInputDom.value;
+            chatSocket.send(JSON.stringify({
+                'message': message
+            }));
+            messageInputDom.value = '';
+        }; **/
+        initialRenderMemberCards();
+        reloadStatusesToCommandPallete();
+        reloadTasksToCommandPallete();
+        switchSidepane();
+        startWebsocket();
+        loadSidepaneMainBody();
+    })
+    </script>
+
+ <div class="modal" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-body">
+        <div class="input-group">
+          <input type="text" id="name_container" autocomplete="off" aria-label="Name" placeholder="Name" class="form-control">
+          <input type="text" id="status_container" autocomplete="off" aria-label="Status" placeholder="Status (Keep Blank to Remain Same)" class="form-control">
+          <input type="text" id="task_container" autocomplete="off" aria-label="Task" placeholder="Task (Keep Blank to Remain Same)" class="form-control">
+        </div>
+          <input type="text" id="content_container" class="form-control" placeholder="Notes for all Users">
+          <a href="javascript:///" class="btn btn-success btn-block" id="run_bulk_action" onclick="executeBulkAction()">Run</a>
+<!--        <div id="new_call_form d-none">
+            <h5>New Call</h5>
+
+        </div> -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="timesheetModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Timesheets</h1>
+        <button type="button" class="btn-close timesheet-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <!--
+          <div class="row">
+            <div class="col-md-4"><a href="javascript:///" id="loadListDuties" class="btn btn-default btn-block manage-btn">List Duties</a></div>
+            <div class="col-md-4"><a href="javascript:///" id="loadAddDuties" class="btn btn-default btn-block manage-btn">Add Duties</a></div>
+        </div>
+        -->
+      </div>
+      <div class="modal-body" id="timesheetModalBody">
+          Just a moment...
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary timesheet-close" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,36 @@
+<div class="accordion" id="accordionExample">
+
+    {% for item in package %}
+    <div class="accordion-item">
+    <h2 class="accordion-header">
+      <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ forloop.counter }}" aria-controls="collapse{{ forloop.counter }}">
+        {{ item.member.name }} ({{ item.member.getAllHistoryDurations }})
+      </button>
+    </h2>
+    <div id="collapse{{ forloop.counter }}" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+      <div class="accordion-body">
+        <table class="table table-condensed table-striped">
+            <thead>
+                <tr>
+                    <th>Time In</th>
+                    <th>Time Out</th>
+                    <th>Duration</th>
+                    <th>Notes</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for task in item.history %}
+                    <tr>
+                    <td>{{ task.time_in }}</td>
+                    <td>{{ task.time_out }}</td>
+                    <td>{{ task.duration }}</td>
+                    <td>{{ task.status.key }}/{{ task.duty.key }}{% if task.notes == "" or task.notes == None %}{% else %}<br>{{ task.notes|linebreaksbr }}{% endif %}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+    {% endfor %}
+</div>

@@ -1,0 +1,7 @@
+{% extends 'ui/base.html' %}
+{% block content %}
+    {% if errors %}
+        {{ errors }}
+    {% endif %}
+    {% include "form_crispy.html" %}
+{% endblock %}

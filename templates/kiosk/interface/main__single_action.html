@@ -1,0 +1,50 @@
+{% include "kiosk/interface/data/self-single.html" %}
+<div id="workspace-processing">
+    <div class="spinner-border" role="status" style="margin-top: 2.5em; display: none;">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</div>
+<div id="workspace-step1" class="container workspaces">
+    <div class="row" id="step-1">
+        <div class="col-md-12">
+
+            <p class="member-rank"></p>
+            <h2>Hey there, <span class="member-name"></span></h2>
+            <h3>Current Status: <span class="member-status"></span> / Current Duty: <span class="member-duty"></span></h3>
+
+            <a href="javascript:///" class="btn btn-block btn-primary" id="check-in-workspace-button" style="height: 3.5em; padding-top: 0.85em; margin: 25px 5px;">Check-In <span id="check-in-status"></span> <span id="check-in-duty"></span></a>
+            <a href="javascript:///" class="btn btn-block btn-primary" id="check-out-workspace-button" style="height: 3.5em; padding-top: 0.85em; margin: 25px 5px;">Check-Out <span id="check-out-status"></span> <span id="check-out-duty"></span></a>
+            <a href="javascript:///" class="btn btn-block btn-primary" id="duty-change-button" style="height: 3.5em; padding-top: 0.85em; margin: 25px 5px;">Change Duty</a>
+            <a href="javascript:///" class="btn btn-block btn-primary" id="status-change-button" style="height: 3.5em; padding-top: 0.85em; margin: 25px 5px;">Change Status</a>
+            <a href="javascript:///" class="btn btn-block btn-primary" onclick="logout()" style="height: 3.5em; padding-top: 0.85em; margin: 25px 5px;">Sign Out</a>
+        </div>
+    </div>
+</div>
+<div id="workspace-duties" class="container workspaces">
+        <div class="row">
+        <div class="col-md-12">
+
+            <p class="member-rank"></p>
+            <h2>Hey there, <span class="member-name"></span></h2>
+            <h3>Current Status: <span class="member-status"></span> / Current Duty: <span class="member-duty"></span></h3>
+
+            <div class="row" id="duty-list"></div>
+            <a href="javascript:///" class="btn btn-block btn-danger back-step1-button" style="height: 3.5em; padding-top: 0.85em; margin: 25px 5px;">Back</a>
+        </div>
+        </div>
+</div>
+<div id="workspace-statuses" class="container workspaces">
+        <div class="row">
+        <div class="col-md-12">
+
+            <p class="member-rank"></p>
+            <h2>Hey there, <span class="member-name"></span></h2>
+            <h3>Current Status: <span class="member-status"></span> / Current Duty: <span class="member-duty"></span></h3>
+
+            <div class="row" id="status-list"></div>
+            <a href="javascript:///" class="btn btn-block btn-danger back-step1-button" style="height: 3.5em; padding-top: 0.85em; margin: 25px 5px;">Back</a>
+        </div>
+        </div>
+</div>
+<input type="text" id="barcodeinput" style="opacity:0;">
+{% include "kiosk/interface/data/app-code.html" %}
