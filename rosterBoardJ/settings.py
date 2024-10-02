@@ -26,7 +26,9 @@ LOGIN_REDIRECT_URL = '/'
 # SECURITY WARNING: don't run with debug turned on in production!
 SECRET_KEY = config("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('APP_DEBUG') == 'TRUE'
+DEBUG = config('APP_DEBUG') == 'true'
+
+ALLOW_REGISTRATION = config('ALLOW_REGISTRATION') == 'true'
 
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
 

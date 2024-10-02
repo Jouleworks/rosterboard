@@ -21,8 +21,9 @@ A management board and system for mobile teams.
 https://rosterboard.jouleworks.net 
 
 ## Requirements
-* Docker
-* PostgreSQL 15 or newer
+* Docker (If using Docker Setup)
+* Python 3.12.x
+* PostgreSQL 16 or newer
 * Redis 7 or newer
 
 ## Getting Started
@@ -30,7 +31,7 @@ https://rosterboard.jouleworks.net
 ### Using Docker
 ```bash
 docker volume create rosterboard-data
-docker run -v rosterboard-data:/app/config -p 8080:8080 --name rosterboard -d rosterboard:latest
+docker run -v rosterboard-data:/app/config -p 8080:8080 --restart=unless-stopped --name rosterboard -d jouleworks/rosterboard:latest
 ```
 
 ### Using Docker Compose
@@ -53,8 +54,9 @@ Go to http://localhost:8080/setup/ to begin.
 
 ### Using Docker
 ```bash
-docker pull rosterboard:latest
-docker restart rosterboard
+docker stop rosterboard
+docker pull jouleworks/rosterboard:latest
+docker start rosterboard
 ```
 
 ### Using Docker Compose

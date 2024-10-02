@@ -1,0 +1,179 @@
+<div class="row">
+
+  <div class="col-md-3">
+    <ul class="list-group">
+
+      <li class="list-group-item" [class.active]="step === (i + 1)" *ngFor="let stp of steps; index as i">
+        <h4 style="font-weight: lighter">{{i + 1}}. {{stp.header}}</h4>
+        <p>{{stp.subtext}}</p>
+      </li>
+
+    </ul>
+  </div>
+  <div class="col-md-9">
+    <div *ngIf="step === 1">
+
+        <h3>I'll be entering my Database Credentials...</h3>
+        <select class="form-control" [(ngModel)]="credentialType">
+            <option disabled [value]="''" [defaultSelected]="true">-- Select --</option>
+            <option value="url">By Providing a Database URL</option>
+            <option value="form">By Entering all Information using a Form</option>
+        </select>
+
+        <div *ngIf="credentialType === 'url'">
+<div>
+        <button style="float: right" class="btn btn-primary btn-sm" (click)="fillInDB('url')">Use Docker Compose Values</button>
+      </div>
+            <div class="mb-3">
+                <label for="db_url" class="form-label">Database URL</label>
+                <input class="form-control" id="db_url" [(ngModel)]="dbUrl" placeholder="postgres://rocky:changeMe@localhost:5432/mydb">
+            </div>
+      <div class="row">
+        <div class="col-md-6 offset-6">
+
+          <button class="btn btn-success btn-lg" style="width: 100%" [disabled]="checkingDb" (click)="testDatabaseCredentials('url')">{{checkingDb ? 'Just a moment...' : 'Test and Next >'}}</button>
+
+        </div>
+      </div>
+        </div>
+
+<form [formGroup]="dbForm" *ngIf="credentialType === 'form'">
+    <div>
+        <button style="float: right" class="btn btn-primary btn-sm" (click)="fillInDB('form')">Use Docker Compose Values</button>
+      </div>
+    <div class="mb-3">
+      <label for="db_host" class="form-label">Database Host</label>
+      <input class="form-control" id="db_host" formControlName="db_host" aria-describedby="dbhostHelp" placeholder="localhost">
+      <div id="dbhostHelp" class="form-text">This should be a FQDN or IP Address that can be reached by this application.</div>
+    </div>
+
+  <div class="mb-3">
+      <label for="db_port" class="form-label">Database Port</label>
+      <input type="number" class="form-control" id="db_port" formControlName="db_port" placeholder="5432">
+    </div>
+
+  <div class="mb-3">
+      <label for="db_user" class="form-label">Database Username</label>
+      <input class="form-control" id="db_user" formControlName="db_user" placeholder="rocky">
+  </div>
+
+  <div class="mb-3">
+      <label for="db_pass" class="form-label">Database Password</label>
+      <input class="form-control" type="password" id="db_pass" formControlName="db_pass" placeholder="changeMe">
+  </div>
+
+  <div class="mb-3">
+      <label for="db_name" class="form-label">Database Name</label>
+      <input class="form-control" id="db_name" formControlName="db_name" aria-describedby="dbnameHelp" placeholder="rosterboard">
+    <div id="dbnameHelp" class="form-text">This database should already be created in PostgreSQL and the user listed above should have Owner Permissions.</div>
+  </div>
+      <div class="row">
+        <div class="col-md-6 offset-6">
+
+          <button class="btn btn-success btn-lg" style="width: 100%" [disabled]="checkingDb" (click)="testDatabaseCredentials('form')">{{checkingDb ? 'Just a moment...' : 'Test and Next >'}}</button>
+
+        </div>
+      </div>
+</form>
+
+    </div>
+
+      <div *ngIf="step === 2">
+          <h3>General Settings</h3>
+          <div class="mb-3" *ngFor="let item of configGenerator | keyvalue">
+
+              <label for="{{item.key}}" class="form-label">{{item.key}}</label>
+              <input *ngIf="item.value.type === 'string'" type="text" class="form-control" id="{{item.key}}" [(ngModel)]="item.value.value" placeholder="{{item.value.value}}">
+
+              <div *ngIf="item.value.type === 'boolean'">
+                  <input type="checkbox" [(ngModel)]="item.value.value">
+                </div>
+
+
+              <p><small>{{item.value.description}}</small></p>
+
+          </div>
+
+                <div class="row">
+        <div class="col-md-6 offset-6">
+
+          <button class="btn btn-success btn-lg" style="width: 100%" (click)="cleanupSetup2()">{{'Next >'}}</button>
+
+        </div>
+      </div>
+      </div>
+      <div *ngIf="step === 3">
+          <h3>Setup your account</h3>
+          <div class="mb-3">
+              <label for="email" class="form-label">Email Address</label>
+              <input type="email" class="form-control" id="email" [(ngModel)]="superuser.email" placeholder="john.doe@example.com">
+          </div>
+          <div class="mb-3">
+              <!-- username -->
+              <label for="username" class="form-label">Username</label>
+              <input type="text" class="form-control" id="username" [(ngModel)]="superuser.username" placeholder="john.doe">
+          </div>
+          <div class="mb-3">
+              <label for="password" class="form-label">Password</label>
+              <input type="password" class="form-control" id="password" [(ngModel)]="superuser.password" placeholder="changeMe">
+          </div>
+          <div class="mb-3">
+              <label for="confirm_password" class="form-label">Confirm Password</label>
+              <input type="password" class="form-control" id="confirm_password" [(ngModel)]="confirmPassword" placeholder="re-enter password">
+          </div>
+
+          <button class="btn btn-success btn-lg" style="width: 100%" (click)="cleanupStep3()">{{'Next >'}}</button>
+      </div>
+      <div *ngIf="step === 4">
+          <h3>Let's look everything over one more time.</h3>
+          <div class="row">
+              <div class="col-md-6">
+
+                  <h5>settings.ini</h5>
+                  <p>This is the config that will be placed in ./config/settings.ini</p>
+
+                  <textarea rows="10" [value]="generatedConfig" readonly class="form-control">
+
+                  </textarea>
+              </div>
+              <div class="col-md-6">
+                  <h5>Superuser</h5>
+                  <p>A superuser will be created with the following values</p>
+                  <dt>Username</dt>
+                  <dd>{{superuser.username}}</dd>
+                  <dt>Email</dt>
+                  <dd>{{superuser.email}}</dd>
+                  <dt>Password</dt>
+                  <dd><em>Hidden</em></dd>
+              </div>
+          </div>
+          <div class="row">
+              <div class="col-md-12">
+                  <h5>Database</h5>
+                  <p>This is the database configuration that will be used. Rosterboard will be setup and run using these credentials:</p>
+                  <p>{{dbUrl}}</p>
+              </div>
+          </div>
+
+          <button class="btn btn-success btn-lg" style="width: 100%" (click)="startInstall()">{{'Install Rosterboard'}}</button>
+
+      </div>
+      <div *ngIf="step === 4.5">
+          <h3>Installation in progress...</h3>
+          <div class="spinner-border text-primary" role="status">
+          </div>
+          <p>Please wait while Rosterboard is being installed and configured... This should only take a few moments.</p>
+      </div>
+      <div *ngIf="step === 5">
+          <h3>Installation complete!</h3>
+          <p>Rosterboard has been successfully installed and configured. Please allow up to thirty seconds for the service to restart and begin running. (Note: If you are <em>not</em> using docker, you will need to manually restart Rosterboard.)</p>
+          <p>To access Rosterboard, go to <a href="/">{{configGenerator.ALLOWED_HOSTS.value}}/</a></p>
+          <p>Username: {{superuser.username}}</p>
+          <p>Password: <em>Hidden</em></p>
+      </div>
+
+
+  </div>
+
+
+</div>

@@ -60,3 +60,4 @@ staticfiles/
 .env
 db.sqlite3
 config/settings.ini
+config/settings.2.ini
