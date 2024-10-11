@@ -16,6 +16,10 @@ class DutySerializer(serializers.ModelSerializer):
         return super().update(instance=instance, validated_data=validated_data)
     def create(self, validated_data):
         event_data = validated_data.pop('event')
+        if validated_data['default'] == "on":
+            validated_data['default'] = True
+        else:
+            validated_data['default'] = False
         duty = Duty.objects.create(**validated_data)
         duty.event = Event.objects.get(id=event_data)
         duty.save()
@@ -139,6 +143,20 @@ class RankSerializer(serializers.ModelSerializer):
         return super().update(instance=instance, validated_data=validated_data)
     def create(self, validated_data):
         event_data = validated_data.pop('event')
+        try:
+            if validated_data['displayOnSidebar'] == "on":
+                validated_data['displayOnSidebar'] = True
+            else:
+                validated_data['displayOnSidebar'] = False
+        except KeyError:
+            validated_data['displayOnSidebar'] = False
+        try:
+            if validated_data['default'] == "on":
+                validated_data['default'] = True
+            else:
+                validated_data['default'] = False
+        except KeyError:
+            validated_data['default'] = False
         rank = Rank.objects.create(**validated_data)
         rank.event = Event.objects.get(id=event_data)
         rank.save()
@@ -197,7 +215,13 @@ class BadgeSerializer(serializers.ModelSerializer):
             member_data = validated_data.pop('member')
         except:
             pass
-
+        try:
+            if validated_data['active'] == "on":
+                validated_data['active'] = True
+            else:
+                validated_data['active'] = False
+        except KeyError:
+            pass
         badge = Badge.objects.create(**validated_data)
         badge.event = Event.objects.get(id=event_data)
         try:
@@ -375,6 +399,37 @@ class KioskSerializer(serializers.ModelSerializer):
         try:
             check_out_duty_data = validated_data.pop('check_out_duty')
         except:
+            pass
+        try:
+            if validated_data['single_state_only'] == "on":
+                validated_data['single_state_only'] = True
+            else:
+                validated_data['single_state_only'] = False
+        except KeyError:
+            pass
+
+        try:
+            if validated_data['automated_check_in_out'] == "on":
+                validated_data['automated_check_in_out'] = True
+            else:
+                validated_data['automated_check_in_out'] = False
+        except KeyError:
+            pass
+
+        try:
+            if validated_data['allow_status_selection'] == "on":
+                validated_data['allow_status_selection'] = True
+            else:
+                validated_data['allow_status_selection'] = False
+        except KeyError:
+            pass
+
+        try:
+            if validated_data['allow_duty_selection'] == "on":
+                validated_data['allow_duty_selection'] = True
+            else:
+                validated_data['allow_duty_selection'] = False
+        except KeyError:
             pass
 
         kiosk = ServiceKiosk.objects.create(**validated_data)
