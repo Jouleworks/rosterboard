@@ -12,6 +12,7 @@ RUN set -ex \
 ADD . /app
 
 RUN rm -rf /app/setup/ui/
+RUN rm -rf /app/.venv
 
 ENV VIRTUAL_ENV=/env
 ENV PATH=/env/bin:$PATH
