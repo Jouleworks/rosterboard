@@ -1,0 +1,41 @@
+version: "3.7"
+
+services:
+  rosterboard-db:
+    image: postgres:17
+    volumes:
+      - rosterboard-db:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-rosterboard}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-rosterboard}
+      POSTGRES_DB: ${POSTGRES_DB:-rosterboard}
+    container_name: rosterboard-db
+    ports:
+      - "5432:5432"
+    networks:
+      - rosterboard
+  rosterboard-redis:
+    image: redis:latest
+    container_name: rosterboard-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - rosterboard
+  rosterboard:
+    image: jouleworks/rosterboard:latest
+    ports:
+      - "8080:8080"
+    expose:
+      - 8080
+    volumes:
+      - rosterboard-data:/app/config
+
+
+
+volumes:
+  rosterboard-db:
+  rosterboard-data:
+
+networks:
+  rosterboard:
+    driver: bridge

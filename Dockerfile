@@ -11,8 +11,6 @@ RUN set -ex \
 
 ADD . /app
 
-RUN /env/bin/python manage.py collectstatic --no-input
-
 ENV VIRTUAL_ENV /env
 ENV PATH /env/bin:$PATH
 

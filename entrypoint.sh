@@ -4,5 +4,6 @@ if [ ! -f ./config/settings.ini ]; then
   hypercorn setup.app:asgi_app -b 0.0.0.0:8080
 else
   echo "Running..."
+  python manage.py collectstatic --no-input
   hypercorn rosterBoardJ.asgi:application -b 0.0.0.0:8080
 fi

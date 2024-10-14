@@ -2,10 +2,12 @@ asgiref==3.7.2
 attrs==23.2.0
 autobahn==23.6.2
 Automat==22.10.0
+blinker==1.8.2
 certifi==2024.2.2
 cffi==1.16.0
 channels==4.0.0
 channels-redis==4.2.0
+click==8.1.7
 constantly==23.10.4
 crispy-bootstrap5==2023.10
 cryptography==42.0.2
@@ -19,6 +21,7 @@ django-filter==24.3
 django-floppyforms==1.9.0
 django-select2==8.2.1
 djangorestframework==3.14.0
+Flask==3.0.3
 fontawesomefree==6.5.1
 h11==0.14.0
 h2==4.1.0
@@ -28,7 +31,10 @@ hyperframe==6.0.1
 hyperlink==21.0.0
 idna==3.6
 incremental==22.10.0
+itsdangerous==2.2.0
+Jinja2==3.1.4
 Markdown==3.5.2
+MarkupSafe==2.1.5
 msgpack==1.0.7
 pillow==10.2.0
 priority==2.0.0
@@ -50,6 +56,7 @@ Twisted==23.10.0
 txaio==23.1.1
 typing_extensions==4.9.0
 urllib3==2.2.0
+Werkzeug==3.0.4
 whitenoise==6.6.0
 wsproto==1.2.0
 zope.interface==6.1
