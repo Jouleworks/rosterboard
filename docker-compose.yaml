@@ -13,20 +13,22 @@ services:
     ports:
       - "5432:5432"
     networks:
-      - rosterboard
+      - rosterboard-net
   rosterboard-redis:
     image: redis:latest
     container_name: rosterboard-redis
     ports:
       - "6379:6379"
     networks:
-      - rosterboard
+      - rosterboard-net
   rosterboard:
     image: jouleworks/rosterboard:latest
     ports:
       - "8080:8080"
     expose:
       - 8080
+    networks:
+      - rosterboard-net
     volumes:
       - rosterboard-data:/app/config
 
@@ -37,5 +39,5 @@ volumes:
   rosterboard-data:
 
 networks:
-  rosterboard:
+  rosterboard-net:
     driver: bridge

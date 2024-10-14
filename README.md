@@ -36,7 +36,8 @@ docker run -v rosterboard-data:/app/config -p 8080:8080 --restart=unless-stopped
 
 ### Using Docker Compose
 ```bash
-# coming soon
+curl -O https://raw.githubusercontent.com/Jouleworks/rosterboard/refs/heads/main/docker-compose.yaml
+docker compose up -d 
 ```
 
 ### From Source

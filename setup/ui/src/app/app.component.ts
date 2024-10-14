@@ -43,10 +43,10 @@ export class AppComponent {
   }
 
   containerVariables = {
-    'db_host': 'localhost',
+    'db_host': 'rosterboard-db',
     'db_port': '5432',
-    'db_user': 'postgres',
-    'db_pass': 'postgres',
+    'db_user': 'rosterboard',
+    'db_pass': 'rosterboard',
     'db_name': 'rosterboard',
   }
 
@@ -77,7 +77,7 @@ export class AppComponent {
           break;
     }
 
-    this.configGenerator.CHANNEL_LAYERS_REDIS_URLS.value = 'redis://rosterboard-redis-db-1:6379/0';
+    this.configGenerator.CHANNEL_LAYERS_REDIS_URLS.value = 'redis://rosterboard-redis:6379/0';
     this.configGenerator.ALLOWED_HOSTS.value = document.location.hostname;
   }
 
@@ -134,7 +134,7 @@ export class AppComponent {
 
   cleanupStep3() {
     // check to make sure password has 8 characters, contains at least one uppercase letter, one lowercase letter, one number, and one special character
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!,#%*?&])[A-Za-z\d@$!%,*#?&]{8,}$/;
     if(!passwordRegex.test(this.superuser.password)){
       alert("Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character.");
       return;
