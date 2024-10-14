@@ -12,8 +12,8 @@ A management board and system for mobile teams.
 * Built-in Timekeeping between on and off shift users
 * "High Volume" mode to group members together into fireteams
 * Highlight specific high-value roles in the sidebar to keep track of VIPs
-* Kiosk URLs and free-badge association to allow users to manage their own status (With permissive restrictions if nessesary)
-* Role,Rank,Duty catagorizations to allow admins and managers to see at-a-glance what qualifications a member has
+* Kiosk URLs and free-badge association to allow users to manage their own status (With permissive restrictions if necessary)
+* Role,Rank,Duty categorizations to allow admins and managers to see at-a-glance what qualifications a member has
 * Notes field for bespoke notes per-user
 * Multi-tenant, to allow one application to manage multiple events.
 
@@ -31,13 +31,13 @@ https://rosterboard.jouleworks.net
 ### Using Docker
 ```bash
 docker volume create rosterboard-data
-docker run -v rosterboard-data:/app/config -p 8080:8080 --restart=unless-stopped --name rosterboard -d jouleworks/rosterboard:latest
+docker run -v rosterboard-data:/app/config -p 8080:8080 --restart=unless-stopped --name rosterboard -d jouleworks/rosterboard:v1.0
 ```
 
 ### Using Docker Compose
 ```bash
-curl -O https://raw.githubusercontent.com/Jouleworks/rosterboard/refs/heads/main/docker-compose.yaml
-curl -O .env https://raw.githubusercontent.com/Jouleworks/rosterboard/refs/heads/main/.env.example # optional!
+curl -O https://raw.githubusercontent.com/Jouleworks/rosterboard/refs/heads/main/docker/production/docker-compose.yaml
+curl -O .env https://raw.githubusercontent.com/Jouleworks/rosterboard/refs/heads/main/docker/production/.env.example # optional!
 docker compose up -d 
 ```
 
@@ -57,7 +57,7 @@ Go to http://localhost:8080/setup/ to begin.
 ### Using Docker
 ```bash
 docker stop rosterboard
-docker pull jouleworks/rosterboard:latest
+docker pull jouleworks/rosterboard:v1.0 # Replace v1.0 with the tag you want to upgrade to here. https://hub.docker.com/r/jouleworks/rosterboard/tags
 docker start rosterboard
 ```
 
