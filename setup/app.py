@@ -23,6 +23,18 @@ async def shutdown():
 def redirect_to_setup():
     return "<script>window.location.href='/setup/';</script>"
 
+@app.route('/fetch/env/')
+def fetch_env_variables():
+    return {
+        "POSTGRES_HOST": os.getenv('POSTGRES_HOST', 'rosterboard-db'),
+        "POSTGRES_PORT": os.getenv('POSTGRES_PORT', '5432'),
+        "POSTGRES_USER": os.getenv('POSTGRES_USER', 'rosterboard'),
+        "POSTGRES_PASSWORD": os.getenv('POSTGRES_PASSWORD', 'rosterboard'),
+        "POSTGRES_DB": os.getenv('POSTGRES_DB', 'rosterboard'),
+        "REDIS_HOST": os.getenv('REDIS_HOST', 'rosterboard-redis'),
+        "REDIS_PORT": os.getenv('REDIS_PORT', '6379'),
+    }
+
 @app.route('/setup/')
 def setup_landing_page():
     return render_template('landing.html')

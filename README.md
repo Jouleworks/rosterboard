@@ -53,12 +53,26 @@ bash entrypoint.sh
 
 Go to http://localhost:8080/setup/ to begin.
 
+# Environment Variables
+
+Set these variables during initial config setup to override default container values. All variables have default values and are not required.
+
+| Variable Name     | Description                              | Default            |
+|-------------------|------------------------------------------|--------------------|
+| POSTGRES_HOST     | Hostname for Postgres Database           | `rosterboard`      |
+| POSTGRES_PORT     | Port for Postgres Database               | 5432               |
+| POSTGRES_USER     | User for the Postgres Database.          | `rosterboard`      |
+| POSTGRES_PASSWORD | Password for the Postgres Database.      | `rosterboard`      |
+| POSTGRES_DB       | Database name for the Postgres Database. | `rosterboard`      |
+| REDIS_HOST        | Host for the Redis Server                | `rosterboard-redis` |
+
+
 ## Upgrading
 
 ### Using Docker
 ```bash
 docker stop rosterboard
-docker pull jouleworks/rosterboard:v1.0 # Replace v1.0 with the tag you want to upgrade to here. https://hub.docker.com/r/jouleworks/rosterboard/tags
+docker pull jouleworks/rosterboard:v1.1 # Replace v1.1 with the tag you want to upgrade to here. https://hub.docker.com/r/jouleworks/rosterboard/tags
 docker start rosterboard
 ```
 

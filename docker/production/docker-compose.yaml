@@ -11,18 +11,18 @@ services:
       POSTGRES_DB: ${POSTGRES_DB:-rosterboard}
     container_name: rosterboard-db
     ports:
-      - "5432:5432"
+      - "${POSTGRES_PORT:-5432}:5432"
     networks:
       - rosterboard-net
   rosterboard-redis:
     image: redis:latest
     container_name: rosterboard-redis
     ports:
-      - "6379:6379"
+      - "${REDIS_PORT:-6379}:6379"
     networks:
       - rosterboard-net
   rosterboard:
-    image: jouleworks/rosterboard:${ROSTERBOARD_VERSION:-v1.0}
+    image: jouleworks/rosterboard:${ROSTERBOARD_VERSION:-v1.1}
     restart: unless-stopped
     container_name: rosterboard
     ports:

@@ -64,6 +64,25 @@ export class AppComponent {
 
 
   fillInDB(mthd: string) {
+
+    this.http.get('/fetch/env/')
+        .subscribe({
+          next: (data: any) => {
+
+            this.containerVariables['db_host'] = data.POSTGRES_HOST;
+            this.containerVariables['db_port'] = data.POSTGRES_PORT;
+            this.containerVariables['db_user'] = data.POSTGRES_USER;
+            this.containerVariables['db_pass'] = data.POSTGRES_PASSWORD;
+            this.containerVariables['db_name'] = data.POSTGRES_DB;
+
+            this.configGenerator.CHANNEL_LAYERS_REDIS_URLS.value = `redis://${data.REDIS_HOST}:${data.REDIS_PORT}/0`;
+
+          },
+          error: (error: any) => {
+            console.error('Error fetching env based credentials:', error);
+          }
+        })
+
     switch (mthd) {
       case 'url':
         // use containerVariables
@@ -76,8 +95,6 @@ export class AppComponent {
         default:
           break;
     }
-
-    this.configGenerator.CHANNEL_LAYERS_REDIS_URLS.value = 'redis://rosterboard-redis:6379/0';
     this.configGenerator.ALLOWED_HOSTS.value = document.location.hostname;
   }
 
