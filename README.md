@@ -1,7 +1,7 @@
-<p align="center">![basic example](./docs/images/1-example-operation.png)</p>
-<p align="center">![rosterboard logo](./roster/static/assets/logo/rosterboard-logo.png)</p>
-# rosterboard
-A management board and system for mobile teams.
+![basic example](./docs/images/1-example-operation.png)
+<p align="center"><img width="200px" height="auto" src="./roster/static/assets/logo/rosterboard-logo.png"></p>
+<h1 align="center">rosterboard</h1>
+<p align="center">A management board and system for mobile teams.</p>
 
 ## Features
 * Fully web-based, no operating system requirements
