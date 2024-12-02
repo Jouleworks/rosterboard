@@ -2,6 +2,7 @@
 <p align="center"><img width="200px" height="auto" src="./roster/static/assets/logo/rosterboard-logo.png"></p>
 <h1 align="center">rosterboard</h1>
 <p align="center">A management board and system for mobile teams.</p>
+<p align="center"><a href="https://rosterboard.app">rosterboard.app</a> | <a href="https://docs.rosterboard.app">docs.rosterboard.app</a></p>
 
 ## Features
 * Fully web-based, no operating system requirements
@@ -18,7 +19,7 @@
 * Multi-tenant, to allow one application to manage multiple events.
 
 ## Demo
-https://rosterboard.jouleworks.net 
+https://live.rosterboard.app
 
 ## Requirements
 * Docker (If using Docker Setup)
