@@ -1,5 +1,5 @@
 <p align="center">![basic example](./docs/images/1-example-operation.png)</p>
-<p align="center">![rosterboard logo](./roster/static/assets/logo/rosterboard-logo-small.png)</p>
+<p align="center">![rosterboard logo](./roster/static/assets/logo/rosterboard-logo.png)</p>
 # rosterboard
 A management board and system for mobile teams.
 
