@@ -72,7 +72,7 @@ Set these variables during initial config setup to override default container va
 ### Using Docker
 ```bash
 docker stop rosterboard
-docker pull jouleworks/rosterboard:v1.1 # Replace v1.1 with the tag you want to upgrade to here. https://hub.docker.com/r/jouleworks/rosterboard/tags
+docker pull jouleworks/rosterboard:v1.2 # Replace v1.2 with the tag you want to upgrade to here. https://hub.docker.com/r/jouleworks/rosterboard/tags
 docker start rosterboard
 ```
 
