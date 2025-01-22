@@ -23,6 +23,10 @@ async def shutdown():
 def redirect_to_setup():
     return "<script>window.location.href='/setup/';</script>"
 
+@app.route('/ping/')
+def ping():
+    return {"status": "pong", "setup": True}
+
 @app.route('/fetch/env/')
 def fetch_env_variables():
     return {

@@ -623,6 +623,9 @@ router.register('api/v1/members', MemberViewSet)
 router.register('api/v1/ranks', RankViewSet)
 router.register('api/v1/badges', BadgeViewSet)
 
+
+def ping(request):
+    return JsonResponse({'status': 'pong', 'setup': False}, safe=False)
 urlpatterns = [
     path('board/<str:event>/api/aux/', getAuxColumns),
     path('board/<str:event>/api/columns/', getMainColumns),
@@ -674,6 +677,7 @@ urlpatterns = [
     path("accounts/", include("django.contrib.auth.urls")),
     path('admin/', admin.site.urls),
     path('new/', newEvent, name='new'),
+    path('ping/', ping, name='ping'),
     path("select2/", include("django_select2.urls")),
     path('', index, name='index'),
 ] + router.urls
