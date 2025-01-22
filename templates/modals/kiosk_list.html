@@ -10,7 +10,7 @@
         {% for kiosk in kiosks %}
             <tr>
                 <td>
-                    <a href="https://rosterboard.jouleworks.net/board/{{ kiosk.event.key }}/kiosk/{{ kiosk.pk }}/" target="_blank">https://rosterboard.jouleworks.net/board/{{ kiosk.event.key }}/kiosk/{{ kiosk.pk }}/</a>
+                    <a href="https://{{ DOMAIN }}/board/{{ kiosk.event.key }}/kiosk/{{ kiosk.pk }}/" target="_blank">https://{{ DOMAIN }}/board/{{ kiosk.event.key }}/kiosk/{{ kiosk.pk }}/</a>
                 </td>
                 <td>
                     Check In Status: {{ kiosk.check_in_status }}<br>
