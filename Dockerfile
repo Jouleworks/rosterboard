@@ -17,6 +17,6 @@ RUN rm -rf /app/.venv
 ENV VIRTUAL_ENV=/env
 ENV PATH=/env/bin:$PATH
 
-EXPOSE 8080
+EXPOSE 9418
 
 CMD ["sh", "entrypoint.sh"]

@@ -36,15 +36,13 @@ services:
     restart: unless-stopped
     container_name: rosterboard
     ports:
-      - "8080:8080"
-    expose:
-      - 8080
+      - "9418:9418"
     networks:
       - rosterboard-net
     volumes:
       - rosterboard-data:/app/config
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8080/ping/ || exit 1"]
+      test: ["CMD-SHELL", "curl -f http://localhost:9418/ping/ || exit 1"]
       interval: 5s
       timeout: 20s
       retries: 10

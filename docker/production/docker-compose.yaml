@@ -26,9 +26,7 @@ services:
     restart: unless-stopped
     container_name: rosterboard
     ports:
-      - "8080:8080"
-    expose:
-      - 8080
+      - "9418:9418"
     networks:
       - rosterboard-net
     volumes:
