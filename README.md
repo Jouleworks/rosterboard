@@ -32,7 +32,7 @@ https://live.rosterboard.app
 ### Using Docker
 ```bash
 docker volume create rosterboard-data
-docker run -v rosterboard-data:/app/config -p 8080:8080 --restart=unless-stopped --name rosterboard -d jouleworks/rosterboard:v1.2
+docker run -v rosterboard-data:/app/config -p 9418:9418 --restart=unless-stopped --name rosterboard -d jouleworks/rosterboard:v1.2
 ```
 
 ### Using Docker Compose
@@ -51,7 +51,7 @@ pip install -r requirements.txt
 bash entrypoint.sh
 ```
 
-Go to http://localhost:8080/setup/ to begin.
+Go to http://localhost:9418/setup/ to begin.
 
 # Environment Variables
 
