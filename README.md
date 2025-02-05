@@ -32,7 +32,7 @@ https://live.rosterboard.app
 ### Using Docker
 ```bash
 docker volume create rosterboard-data
-docker run -v rosterboard-data:/app/config -p 8080:8080 --restart=unless-stopped --name rosterboard -d jouleworks/rosterboard:v1.0
+docker run -v rosterboard-data:/app/config -p 8080:8080 --restart=unless-stopped --name rosterboard -d jouleworks/rosterboard:v1.2
 ```
 
 ### Using Docker Compose
