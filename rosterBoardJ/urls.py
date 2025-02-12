@@ -464,6 +464,10 @@ def postEdit(request, event, name, pk):
             dat[x] = True
         if dat0[x] == "false":
             dat[x] = False
+        if dat0[x] == "on":
+            dat[x] = True
+        if dat0[x] == "off":
+            dat[x] = False
     del dat['csrfmiddlewaretoken']
     model = None
     #print(dat)

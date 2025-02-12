@@ -32,7 +32,7 @@ https://live.rosterboard.app
 ### Using Docker
 ```bash
 docker volume create rosterboard-data
-docker run -v rosterboard-data:/app/config -p 9418:9418 --restart=unless-stopped --name rosterboard -d jouleworks/rosterboard:v1.2
+docker run -v rosterboard-data:/app/config -p 9418:9418 --restart=unless-stopped --name rosterboard -d jouleworks/rosterboard:v1.3
 ```
 
 ### Using Docker Compose
@@ -72,7 +72,7 @@ Set these variables during initial config setup to override default container va
 ### Using Docker
 ```bash
 docker stop rosterboard
-docker pull jouleworks/rosterboard:v1.2 # Replace v1.2 with the tag you want to upgrade to here. https://hub.docker.com/r/jouleworks/rosterboard/tags
+docker pull jouleworks/rosterboard:v1.3 # Replace v1.3 with the tag you want to upgrade to here. https://hub.docker.com/r/jouleworks/rosterboard/tags
 docker start rosterboard
 ```
 

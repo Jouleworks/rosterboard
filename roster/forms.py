@@ -75,7 +75,7 @@ class KioskForm(forms.ModelForm):
 
     class Meta:
         model = ServiceKiosk
-        exclude = ['single_state_only']
+        fields = '__all__'
 
 class BadgeForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
