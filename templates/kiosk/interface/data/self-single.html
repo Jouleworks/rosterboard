@@ -1,11 +1,84 @@
-<div id="workspace-splash" style="border: 15px solid darkolivegreen; margin-top: 2em; background: forestgreen; border-radius: 25px; width: 100%; height: 75vh; padding-top: 30vh; color: white; font-size: 24px;">
-    <div>
-    Self-Service<br>
+<div class="row">
+    <div class="col-md-12 do-check-action" data-id="{{ kiosk.check_in_status.pk }}">
+        <div class="do-check-action" data-id="{{ kiosk.check_in_status.pk }}" style="border: 15px solid #0d6297; margin-top: 2em; background: #123788; border-radius: 25px; width: 100%; height: 75vh; padding-top: 30vh; color: white; font-size: 24px;">
+    <div class="do-check-action" data-id="{{ kiosk.check_in_status.pk }}">
+    {{ kiosk.check_in_status.key }} - {{ kiosk.check_in_status.name }}<br>
 
-    <small>Scan to Sign In</small>
-    </div>
-    <div class="spinner-border" role="status" style="margin-top: 2.5em; display: none;" id="barcode-processing">
-        <span class="visually-hidden">Loading...</span>
+    <small class="do-check-action" data-id="{{ kiosk.check_in_status.pk }}">Scan to Change Status</small>
     </div>
 
 </div>
+    </div>
+</div>
+
+<script>
+    let toastNum = 0;
+    function showToast(message) {
+            $("body").prepend(`<div class="toast show outline-error" id="toast-${toastNum}" style="position: absolute; z-index: ${toastNum + 1}">
+              <div class="toast-header">
+                Information
+                <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+              </div>
+              <div class="toast-body">
+                ${message}
+              </div>
+            </div>`);
+            let cToastNum = toastNum;
+            toastNum++;
+            setTimeout(() => {
+                $("#toast-" + cToastNum).remove();
+            }, 5000);
+        }
+
+    $(document).ready(function() {
+
+        let storedBadgeNumber = "";
+        let checkStatus = "{{ kiosk.check_in_status.pk }}";
+        let isFocused = true;
+        
+        $("#barcodeinput").focus();
+
+        $("#barcodeinput").on("focusout", function (event) {
+            isFocused = false;
+        })
+
+        $(document).on('keyup', function (event) {
+            if (!isFocused) {
+                $("#barcodeinput").val(event.originalEvent.key);
+                $("#barcodeinput").focus();
+                isFocused = true;
+            }
+            if (event.originalEvent.key === "Enter") {
+                // do barcode processing.
+                storedBadgeNumber = $("#barcodeinput").val();
+                doCheckToCheckInOut();
+            }
+        })
+
+        $(".do-check-action").on('click', function (event) {
+            checkStatus = $(event.target).data("id");
+            doCheckToCheckInOut();
+        })
+
+        function doCheckToCheckInOut() {
+            if(storedBadgeNumber === "" && checkStatus !== ""){
+                showToast("Scan your badge to continue");
+                $("#barcodeinput").focus();
+            }
+            if(storedBadgeNumber !== "" && checkStatus === ""){
+                showToast("Select check-in or check-out status to continue");
+            }
+            if(storedBadgeNumber!== "" && checkStatus!== ""){
+                // perform checkin
+                $.get('set/' + storedBadgeNumber + '/status/' + checkStatus + '/', function (res) {
+                    showToast("Set Status Successfully.");
+                    storedBadgeNumber = "";
+                    //checkStatus = "";
+                })
+            }
+        }
+
+
+
+    })
+</script>
