@@ -1,3 +1,4 @@
+{% load static %}
 <script type="text/javascript">
     function logout() {
         window.location.reload();
@@ -40,6 +41,8 @@
             loadWorkspace("processing");
             $.get('set/' + inputcode + '/status/' + status + '/', function (res) {
                 showToast("Set Status Successfully.");
+                var audio = new Audio('{% static "/assets/audio/succeed.mp3" %}');
+                audio.play();
                 if(doLoad) {
                     renderFromBadge(inputcode);
                 }

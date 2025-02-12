@@ -1,3 +1,4 @@
+{% load static %}
 <div class="row">
     <div class="col-md-6 do-check-action" data-id="{{ kiosk.check_in_status.pk }}">
         <div class="do-check-action" data-id="{{ kiosk.check_in_status.pk }}" style="border: 15px solid #0d6297; margin-top: 2em; background: #123788; border-radius: 25px; width: 100%; height: 75vh; padding-top: 30vh; color: white; font-size: 24px;">
@@ -56,6 +57,7 @@
             if (!isFocused) {
                 $("#barcodeinput").val(event.originalEvent.key);
                 $("#barcodeinput").focus();
+                $("#barcodeinput").blur();
                 isFocused = true;
             }
             if (event.originalEvent.key === "Enter") {
@@ -82,6 +84,8 @@
                 // perform checkin
                 $.get('set/' + storedBadgeNumber + '/status/' + checkStatus + '/', function (res) {
                     showToast("Set Status Successfully.");
+                    var audio = new Audio('{% static "/assets/audio/succeed.mp3" %}');
+                    audio.play();
                     storedBadgeNumber = "";
                     checkStatus = "";
                 })
