@@ -474,39 +474,39 @@ def postEdit(request, event, name, pk):
     if name == 'member':
         ob = Member.objects.get(pk=pk)
         model = MemberSerializer().update(ob,dat)
-        ser = MemberSerializer(instance=model)
+        ser = MemberSerializer(instance=model, partial=True)
     if name == 'status':
         ob = Status.objects.get(pk=pk)
         model = StatusSerializer().update(ob,dat)
-        ser = StatusSerializer(instance=model)
+        ser = StatusSerializer(instance=model, partial=True)
     if name == 'rank':
         ob = Rank.objects.get(pk=pk)
         model = RankSerializer().update(ob,dat)
-        ser = RankSerializer(instance=model)
+        ser = RankSerializer(instance=model, partial=True)
     if name == 'duty':
         ob = Duty.objects.get(pk=pk)
         model = DutySerializer().update(ob,dat)
-        ser = DutySerializer(instance=model)
+        ser = DutySerializer(instance=model, partial=True)
     if name == 'volumerole':
         ob = VolumeRole.objects.get(pk=pk)
         model = VolumeRoleSerializer().update(ob,dat)
-        ser = VolumeRoleSerializer(instance=model)
+        ser = VolumeRoleSerializer(instance=model, partial=True)
     if name == 'kiosk':
         ob = ServiceKiosk.objects.get(pk=pk)
         model = KioskSerializer().update(ob,dat)
-        ser = KioskSerializer(instance=model)
+        ser = KioskSerializer(instance=model, partial=True)
     if name == 'badge':
         ob = Badge.objects.get(pk=pk)
         model = BadgeSerializer().update(ob,dat)
-        ser = BadgeSerializer(instance=model)
+        ser = BadgeSerializer(instance=model, partial=True)
     if name == 'event':
         ob = Event.objects.get(pk=pk)
         model = EventSerializer().update(ob,dat)
-        ser = EventSerializer(instance=model)
+        ser = EventSerializer(instance=model, partial=True)
     if name == 'history':
         ob = History.objects.get(pk=pk)
         model = HistorySerializer().update(ob,dat)
-        ser = HistorySerializer(instance=model)
+        ser = HistorySerializer(instance=model, partial=True)
     model.save()
     return JsonResponse(ser.data, safe=False)
 

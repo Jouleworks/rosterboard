@@ -8,7 +8,7 @@ from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from channels.layers import get_channel_layer
 from colorfield.fields import ColorField
 from django.contrib.auth import get_user_model
-from django.db import models
+from django.db import models, IntegrityError
 from django.utils import timezone
 from rest_framework.serializers import ModelSerializer
 
@@ -176,7 +176,10 @@ class Member(models.Model):
                 "client": "SAVEMODEL"
             }, self.event.key)
         #print("Hello??")
-        return super(Member, self).save(*args, **kwargs)
+        try:
+            return super(Member, self).save(*args, **kwargs)
+        except IntegrityError:
+            pass
         # ChatConsumer().send(text_data=json.dumps({
         #    "type": "user.inplacechange",
         #    "userid": str(self.id),
