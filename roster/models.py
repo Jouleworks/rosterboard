@@ -20,6 +20,11 @@ class Event(models.Model):
     name = models.CharField(max_length=100, help_text="Name of the Event")
     notes = models.TextField(blank=True, null=True, help_text="Supports Basic Markdown")
     highVolumeMode = models.BooleanField(default=False, help_text="Enables Member Teaming and High Volume Roles for Rapid Response")
+    codes = models.JSONField(default=dict, help_text="Codes for Calls in format [key, name, color]")
+    feature_mesh = models.BooleanField(default=False, help_text="Enables the feature to mesh radios")
+    feature_mesh_api_base = models.CharField(max_length=255, help_text="Base URL for Mesh API", blank=True, null=True)
+    feature_mesh_api_key = models.CharField(max_length=255, help_text="API Key for Mesh API", blank=True, null=True)
+    feature_mesh_channel = models.IntegerField(default=0, help_text="Channel ID for Mesh API", blank=True, null=True)
 
     def __str__(self):
         return "%s - %s" % (self.key, self.name)

@@ -33,9 +33,14 @@ from rest_framework.routers import DefaultRouter
 
 from roster.forms import MemberForm, RankForm, StatusForm, DutyForm, EventForm, VolumeRoleForm, KioskForm, BadgeForm, \
     HistoryForm
-from roster.models import Event, Duty, Status, Member, Rank, VolumeRole, AccessRight, ServiceKiosk, Badge, History
+from roster.models import Event, Duty, Status, Member, Rank, VolumeRole, AccessRight, ServiceKiosk, Badge, History, Call
 from roster.serializers import DutySerializer, StatusSerializer, MemberSerializer, VolumeRoleSerializer, RankSerializer, \
-    EventSerializer, KioskSerializer, BadgeSerializer, HistorySerializer
+    EventSerializer, KioskSerializer, BadgeSerializer, HistorySerializer, CallSerializer
+from roster.viewsets import (
+    AccessRightViewSet, VolumeRoleViewSet, StatusViewSet, DutyViewSet,
+    RankViewSet as NewRankViewSet, MemberViewSet as NewMemberViewSet,
+    BadgeViewSet as NewBadgeViewSet, ServiceKioskViewSet, HistoryViewSet, CallViewSet
+)
 from django.utils.translation import gettext_lazy as _
 
 def renderBoard(request, event):
@@ -137,6 +142,20 @@ def getAuxColumns(request, event):
         columns.append([{"name": x.name, "id": x.pk, "key": x.key} for x in
                         Status.objects.filter(event=event_obj, key=x, hideFromColumns=True).order_by('sortOrder')])
     return JsonResponse(columns, safe=False)
+
+def getCalls(request, event):
+    event_obj = get_object_or_404(Event, key=event)
+    calls = Call.objects.filter(event=event_obj)
+    if request.GET.get('callKey',None) is not None:
+        calls = calls.filter(callKey=request.GET.get('callKey'))
+    if request.GET.get('callClosed', None) is not None:
+        if request.GET.get('callClosed') == 'true':
+            calls = calls.filter(callEnd__isnull=False)
+        else:
+            calls = calls.filter(callEnd__isnull=True)
+    if request.GET.get('withMembers', None) is not None:
+        calls = calls.filter(membersAttached__in=request.GET.get('withMembers').split(','))
+    return JsonResponse(CallSerializer(instance=calls, many=True).data, safe=False)
 
 def updateMembersStatus(request, event, member_id, status_id):
     event_obj = get_object_or_404(Event, key=event)
@@ -623,15 +642,29 @@ class BadgeViewSet(viewsets.ModelViewSet):
 
 
 router = DefaultRouter()
-router.register('api/v1/members', MemberViewSet)
-router.register('api/v1/ranks', RankViewSet)
-router.register('api/v1/badges', BadgeViewSet)
+# Existing viewsets (kept for backward compatibility)
+router.register('api/v1/members', MemberViewSet, basename='member')
+router.register('api/v1/ranks', RankViewSet, basename='rank')
+router.register('api/v1/badges', BadgeViewSet, basename='badge')
+
+# New viewsets for all Event-related models
+router.register('api/v1/access-rights', AccessRightViewSet, basename='accessright')
+router.register('api/v1/volume-roles', VolumeRoleViewSet, basename='volumerole')
+router.register('api/v1/statuses', StatusViewSet, basename='status')
+router.register('api/v1/duties', DutyViewSet, basename='duty')
+router.register('api/v1/ranks-full', NewRankViewSet, basename='rank-full')
+router.register('api/v1/members-full', NewMemberViewSet, basename='member-full')
+router.register('api/v1/badges-full', NewBadgeViewSet, basename='badge-full')
+router.register('api/v1/service-kiosks', ServiceKioskViewSet, basename='servicekiosk')
+router.register('api/v1/history', HistoryViewSet, basename='history')
+router.register('api/v1/calls', CallViewSet, basename='call')
 
 
 def ping(request):
     return JsonResponse({'status': 'pong', 'setup': False}, safe=False)
 urlpatterns = [
     path('board/<str:event>/api/aux/', getAuxColumns),
+    path('board/<str:event>/api/calls/', getCalls),
     path('board/<str:event>/api/columns/', getMainColumns),
     path('board/<str:event>/api/members/', getMembers),
     path('board/<str:event>/api/member/<str:id>/', getMember),

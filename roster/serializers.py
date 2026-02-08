@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from roster.models import Call, Duty, Event, VolumeRole, Status, Rank, Member, ServiceKiosk, Badge, History
+from roster.models import Call, Duty, Event, VolumeRole, Status, Rank, Member, ServiceKiosk, Badge, History, AccessRight
 
 
 class CallSerializer(serializers.ModelSerializer):
@@ -472,3 +472,9 @@ class VolumeRoleSerializer(serializers.ModelSerializer):
     class Meta:
         model = VolumeRole
         fields = ['id', 'event', 'key', 'color', 'sortOrder', 'stringListOfMembers']
+
+
+class AccessRightSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AccessRight
+        fields = '__all__'
