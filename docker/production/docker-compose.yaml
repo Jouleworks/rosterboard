@@ -22,7 +22,7 @@ services:
     networks:
       - rosterboard-net
   rosterboard:
-    image: jouleworks/rosterboard:${ROSTERBOARD_VERSION:-v1.3}
+    image: jouleworks/rosterboard:${ROSTERBOARD_VERSION:-v1.4}
     restart: unless-stopped
     container_name: rosterboard
     ports:
