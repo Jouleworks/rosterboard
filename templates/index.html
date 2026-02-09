@@ -23,12 +23,19 @@
     <div class="col-md-2 loading-container-active">
         <div id="sidepane__main" class="sidepanes loading-container-active">
             <div class="row">
+                {% if event.feature_mesh == False %}
                 <div class="col-md-4">
                     <a href="/" class="btn btn-danger" style="margin-bottom: 0.5em; min-width: 45px;"><i class="fa-solid fa-xmark"></i></a>
                 </div>
+                {% endif %}
                 <div class="col-md-4" style="text-align: center">
                     <a href="javascript:///" id="timesheets_btn" class="btn btn-warning" style="margin-bottom: 0.5em; min-width: 45px;"><i class="fa-solid fa-table-list"></i></a>
                 </div>
+                {% if event.feature_mesh %}
+                <div class="col-md-4" style="text-align: center">
+                    <a href="javascript:///" id="messages_btn" class="btn btn-warning" onclick="loadMessages()"  style="margin-bottom: 0.5em; min-width: 45px;"><i class="fa-solid fa-message"></i></a>
+                </div>
+                {% endif %}
                 <div class="col-md-4">
                     <a href="javascript:///" id="manage_board_btn" class="btn btn-primary" onclick="loadSettings()" style="margin-bottom: 0.5em; float: right; min-width: 45px;"><i class="fa-solid fa-gears"></i></a>
                 </div>
@@ -51,6 +58,14 @@
 
             </div>
         </div>
+    {% if event.feature_mesh %}
+        <div id="sidepane__messages" class="sidepanes">
+            <a href="javascript:///" id="sidepane__btn_load_main" class="btn btn-primary btn-block" style="margin-bottom: 0.5em;" onclick="backToMain()"><i class="fa-solid fa-arrow-left"></i> Back</a>
+            <div id="sidepane__messages_body">
+
+            </div>
+        </div>
+    {% endif %}
     </div>
     </div>
 
@@ -91,6 +106,13 @@
             })
         }
 
+        function loadMessages(){
+            $.get('modals/messages/', function(data) {
+                $("#sidepane__messages_body").html(data);
+                switchSidepane("messages");
+            })
+        }
+
         function loadSidepaneMainBody() {
             $.get('modals/sidebar/', function(data) {
                 $("#sidepane__main_body").html(data);
@@ -109,7 +131,6 @@
             $.get("timesheets/", function(html) {
                 $("#timesheetModalBody").html(html);
             })
-                
         })
 
         $(document).on('click', '.timesheet-close', function(e) {

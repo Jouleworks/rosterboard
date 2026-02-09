@@ -177,6 +177,10 @@ def eventManagementPane(request, event):
     event_obj = get_object_or_404(Event, key=event)
     return render(request, 'modals/manage_event.html', context={"event": event_obj})
 
+def eventMessagesPane(request, event):
+    event_obj = get_object_or_404(Event, key=event)
+    return render(request, 'modals/manage_messages.html', context={"event": event_obj})
+
 def rankList(request, event):
     event_obj = get_object_or_404(Event, key=event)
     return render(request, 'modals/rank_list.html',
@@ -682,6 +686,7 @@ urlpatterns = [
     path('board/<str:event>/timesheets/', getTimesheets),
     path('board/<str:event>/modals/sidebar/', sidebarMembers),
     path('board/<str:event>/modals/settings/', eventManagementPane),
+    path('board/<str:event>/modals/messages/', eventMessagesPane),
     path('board/<str:event>/modals/event/details/', renderEventDetails),
     path('board/<str:event>/', renderBoard),
     path('board/<str:event>/kiosk/<str:kiosk_pk>/', renderKiosk),
@@ -697,8 +702,8 @@ urlpatterns = [
     path('board/<str:event>/modals/member/list/', memberList),
     path('board/<str:event>/modals/rank/list/', rankList),
     path('board/<str:event>/modals/rank/add/', rankAdd),
-      path('board/<str:event>/modals/history/list/', historyList),
-      path('board/<str:event>/modals/history/add/', historyAdd),
+    path('board/<str:event>/modals/history/list/', historyList),
+    path('board/<str:event>/modals/history/add/', historyAdd),
     path('board/<str:event>/modals/status/add/', statusAdd),
     path('board/<str:event>/modals/status/list/', statusList),
     path('board/<str:event>/modals/duty/add/', dutiesAdd),

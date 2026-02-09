@@ -1,0 +1,126 @@
+<h5 style="margin: 18px 0; text-align: left;">{{ event.name }}<br><small class="text-muted" style="font-size: 14px;">Settings</small></h5>
+<div class="row">
+    <div id="messages__input" style="width: 100%; margin-bottom: 10px;">
+        <input type="text" id="message_input" class="form-control" placeholder="Type your message here..." onkeyup="sendMessageEnter(event)">
+        <button type="button" class="btn btn-primary btn-block" style="width: 100%" onclick="sendMessage()">Send</button>
+    </div>
+    <div id="messages__list" style="height: 90vh; width: 100%; overflow-y: scroll">
+    </div>
+</div>
+<script>
+
+    function getAPIDetails() {
+    let apikey = "{{ event.feature_mesh_api_key }}";
+    let baseuri = "{{ event.feature_mesh_api_base }}";
+    let channel = parseInt("{{ event.feature_mesh_channel }}");
+    return {apikey, baseuri, channel};
+    }
+
+    function sendMessageEnter(event) {
+        if (event.key === "Enter") {
+            sendMessage();
+        }
+    }
+
+    function sendMessage() {
+        let message = $("#message_input").val();
+        $("#message_input").val("");
+        let {apikey, baseuri, channel} = getAPIDetails();
+        fetch(`${baseuri}messages`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${apikey}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                channel: channel,
+                text: message
+            })
+        }).then(
+            async response => {
+                if(response.ok){
+                    createMessage("Sending...", message, Date.now());
+                    newToast("Success", "Message sent successfully");
+                } else {
+                    newToast("Error", "Failed to send message");
+                }
+            }
+        ).catch(
+            error => {
+                newToast("Error", "Failed to send message");
+            }
+        );
+    }
+
+    function newToast(title, message) {
+        $("body").append('<div class="toast" id="toast-1" role="alert" aria-live="assertive" aria-atomic="true"><div class="toast-header"><strong class="me-auto">'+title+'</strong><button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button></div><div class="toast-body">'+message+'</div></div>');
+    }
+
+    function createMessage(node, message, timestamp, append=false){
+        let html = `
+        <div style="margin-top: 5px; margin-bottom: 3px; font-size: 10px; width: 100%">
+        <span style="font-weight: bold;">${node} (${new Date(timestamp).toISOString()})</span>
+        </div>
+        <div class="message" style="padding: 10px; background: rebeccapurple; color: white; width: 100%; margin-bottom: 5px;">
+        ${message}
+        </div>
+        `;
+        if(append) {
+            $("#messages__list").append(html);
+        }else{
+            $("#messages__list").prepend(html);
+        }
+    }
+    $(document).ready(function() {
+        console.log("MESSAGES PANE: READY");
+        let {apikey, baseuri, channel} = getAPIDetails();
+
+        function clearMessages() {
+            $("#messages__list").html("");
+        }
+
+        let n = fetch(`${baseuri}messages?channel=${channel}&limit=100`, {
+            headers: {
+                'Authorization': `Bearer ${apikey}`
+            }
+        }).then(
+            async response => {
+                let d = await response.json();
+                console.log(d);
+                for (const dElement of d.data) {
+                    createMessage(dElement.fromNodeId, dElement.text, dElement.timestamp, true);
+                }
+            }
+        )
+
+        let intv = setInterval(function() {
+            if(!$("#sidepane__messages").hasClass("show-sidepane")){
+                clearInterval(intv);
+                console.warn("Messages pane not visible, stopping polling");
+                return;
+            }
+
+            try{
+                let {apikey, baseuri, channel} = getAPIDetails();
+                fetch(`${baseuri}messages?channel=${channel}&limit=100`, {
+                    headers: {
+                        'Authorization': `Bearer ${apikey}`
+                    }
+                }).then(
+                    async response => {
+                        let v = await response.json();
+                        console.log(v);
+                        clearMessages();
+                        for (const dElement of v.data) {
+                            createMessage(dElement.fromNodeId, dElement.text, dElement.timestamp, true);
+                        }
+                    }
+                )
+            }catch(error){
+                console.error(error);
+                clearInterval(intv);
+            }
+
+        }, 10000);
+    })
+</script>
