@@ -13,7 +13,7 @@ class EventForm(forms.ModelForm):
 
     class Meta:
         model = Event
-        fields = '__all__'
+        exclude = ['codes', 'feature_mesh', 'feature_mesh_channel', 'feature_mesh_api_key', 'feature_mesh_api_base']
 
 class MemberForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
